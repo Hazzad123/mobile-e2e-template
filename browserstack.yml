@@ -1,0 +1,29 @@
+# ============================================================================
+#  browserstack.yml  —  configures the BrowserStack SDK (Test Observability).
+# ============================================================================
+#  IMPORTANT: the actual Appium sessions are opened by core/driver.js with the
+#  capabilities in core/browserstack.js. This file ONLY governs the SDK's Test
+#  Observability build. Every value here is injected from env vars that
+#  core/matrix.js sets per run/device, so there is nothing app-specific to edit.
+#
+#  The build name/identifier match the raw session caps, so the App Automate
+#  build and the Observability build group together as one.
+# ============================================================================
+
+userName: "${BROWSERSTACK_USERNAME}"
+accessKey: "${BROWSERSTACK_ACCESS_KEY}"
+
+projectName: "${BROWSERSTACK_PROJECT_NAME}"
+buildName: "${BROWSERSTACK_BUILD_NAME}"
+buildIdentifier: "${BROWSERSTACK_BUILD_IDENTIFIER}"
+
+# One platform per SDK process, injected per device by core/matrix.js.
+platforms:
+  - platformName: "${BS_PLATFORM_NAME}"
+    deviceName: "${BS_DEVICE}"
+    platformVersion: "${BS_OS_VERSION}"
+
+testObservability: true
+# We don't run BrowserStack accessibility scans; leaving this on made the SDK
+# attempt (and fail) an accessibility build on every run.
+accessibility: false

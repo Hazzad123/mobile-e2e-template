@@ -1,0 +1,104 @@
+image: node:22
+
+clone:
+  depth: 1
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Three MANUAL pipelines: regression (both platforms), regression-ios,
+# regression-android. None run on push — start them from Pipelines → Run pipeline.
+#
+# 1. Upload your APK/IPA to BrowserStack (dashboard → App Automate → Apps →
+#    Upload, or: npm run upload -- --file <binary>).
+# 2. Run pipeline → pick one → paste the bs:// URL(s).
+#    A platform with an empty URL is SKIPPED (exit 0), not failed.
+# 3. TEST_SECTIONS: "all", or a comma-separated list (e.g. "auth,example").
+#
+# Test steps never fail their own step — they record their exit code in
+# test-status/<platform>.env so the final "verdict" step always runs. That step
+# (core/verdict.js) carries the pipeline's real pass/fail result.
+#
+# App identity (bundle id / package) is read from automation.config.js — it is
+# NOT a repository variable. Only secrets live in repository variables:
+#   BROWSERSTACK_USERNAME, BROWSERSTACK_ACCESS_KEY,
+#   TESTRAIL_BASE_URL, TESTRAIL_USERNAME, TESTRAIL_API_KEY,
+#   TESTRAIL_PROJECT_ID, TESTRAIL_SUITE_ID (optional), TESTRAIL_CONFIG_IDS (optional)
+# ─────────────────────────────────────────────────────────────────────────────
+
+definitions:
+  steps:
+    - step: &test-android
+        name: Android E2E (BrowserStack matrix)
+        size: 2x
+        max-time: 240
+        script:
+          - mkdir -p test-status
+          - if [ -z "${BS_APP_URL_ANDROID:-}" ]; then echo "EXIT=skipped" > test-status/android.env; echo "No Android bs:// URL — skipping"; exit 0; fi
+          - export PLATFORM=android BROWSERSTACK=true BS_APP_URL="$BS_APP_URL_ANDROID"
+          - export TEST_SECTIONS="${TEST_SECTIONS:-all}"
+          - if [ "$TEST_SECTIONS" = "all" ]; then export E2E_RUN_LABEL=Regression; else export E2E_RUN_LABEL=Manual; fi
+          - export MAX_CONSECUTIVE_FAILURES=5
+          - npm ci
+          - (npm run test:ci); echo "EXIT=$?" > test-status/android.env
+        artifacts:
+          - test-results/**
+          - screenshots/**
+          - test-status/**
+
+    - step: &test-ios
+        name: iOS E2E (BrowserStack matrix)
+        size: 2x
+        max-time: 240
+        script:
+          - mkdir -p test-status
+          - if [ -z "${BS_APP_URL_IOS:-}" ]; then echo "EXIT=skipped" > test-status/ios.env; echo "No iOS bs:// URL — skipping"; exit 0; fi
+          - export PLATFORM=ios BROWSERSTACK=true BS_APP_URL="$BS_APP_URL_IOS"
+          - export TEST_SECTIONS="${TEST_SECTIONS:-all}"
+          - if [ "$TEST_SECTIONS" = "all" ]; then export E2E_RUN_LABEL=Regression; else export E2E_RUN_LABEL=Manual; fi
+          - export MAX_CONSECUTIVE_FAILURES=5
+          - npm ci
+          - (npm run test:ci); echo "EXIT=$?" > test-status/ios.env
+        artifacts:
+          - test-results/**
+          - screenshots/**
+          - test-status/**
+
+    - step: &report
+        name: Run summary + verdict
+        script:
+          - if [ "${TEST_SECTIONS:-all}" = "all" ]; then export E2E_RUN_LABEL="Regression"; else export E2E_RUN_LABEL="Manual E2E"; fi
+          - node core/verdict.js
+
+pipelines:
+  custom:
+    regression:
+      - variables:
+          - name: BS_APP_URL_ANDROID
+            default: ""
+          - name: BS_APP_URL_IOS
+            default: ""
+          - name: TEST_SECTIONS
+            default: all
+      - parallel:
+          # Both platforms at once needs 2 BrowserStack parallel slots. With only
+          # 1, replace this parallel block with two sequential `- step:` entries.
+          - step: *test-android
+          - step: *test-ios
+      - step: *report
+
+    regression-android:
+      - variables:
+          - name: BS_APP_URL_ANDROID
+            default: ""
+          - name: TEST_SECTIONS
+            default: all
+      - step: *test-android
+      - step: *report
+
+    regression-ios:
+      - variables:
+          - name: BS_APP_URL_IOS
+            default: ""
+          - name: TEST_SECTIONS
+            default: all
+      - step: *test-ios
+      - step: *report

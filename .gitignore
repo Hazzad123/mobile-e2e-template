@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Local secrets & settings — NEVER commit these
+.env
+
+# Generated output
+test-results/
+screenshots/
+test-status/
+
+# Tester drop-ins: keep the folder + its README, ignore the dropped-in contents
+app-under-test/*
+!app-under-test/README.md
+testrail-import/*
+!testrail-import/README.md
