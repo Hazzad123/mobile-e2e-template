@@ -6,12 +6,11 @@ attaches Test Observability.
 
 Choose the root [manual workflow](../MANUAL-WORKFLOW.md) or the approved
 [Claude-guided workflow](../AI-GUIDED-WORKFLOW.md) before adapting this suite.
-Run the commands below only in a folder whose root `template-state.json` says
-`project-copy`. New Claude users can open the source template and type
-`help me get started`; Claude will first create that separate working copy,
-then check iOS tooling and guide setup.
+You work in your downloaded copy of the template, so the commands below run
+directly here. New Claude users can open Claude Code in that folder and type
+`help me get started`; Claude will check iOS tooling and guide setup.
 
-From the project-copy root, check readiness first:
+From the project root, check readiness first:
 
 ```bash
 node onboarding/check-prerequisites.js --platform ios

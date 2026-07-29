@@ -85,15 +85,22 @@ declarations, create a reviewed local-only manifest/lock or remove the optional
 integration and regenerate the lock for that project. Any hosted vendor
 capability also requires the project's normal service approval.
 
-## 1. Create a separate project working copy
+## 1. Get your own copy of the template
 
-Do not install dependencies, create `.env` files, add app material, initialise
-Git, or edit tests in the source template. First make a clean working copy for
-the actual project.
+Do not install dependencies, create `.env` files, add app material, or edit
+tests inside a shared checkout of this starter. First get a clean copy for the
+actual project.
 
-The safe copier needs Node.js 20 or later. `npm` normally arrives with Node.js,
+Download this template as a Zip and unzip it to an unused folder of your own,
+normally named after the app (for example `example-app-automation`). Because a
+Zip download is detached from the template's shared repository, that unzipped
+folder is already your isolated project copy — there is nothing to copy in place
+and no workspace marker to set. Open that folder and do every remaining step
+there.
+
+The tools below need Node.js 20 or later. `npm` normally arrives with Node.js,
 and Git records file history later if the project chooses to initialise it.
-Check the core tools without changing the template:
+Check the core tools:
 
 ```bash
 node --version
@@ -115,66 +122,26 @@ higher. The visible success signal is still the three version commands above;
 the rest of this guide does not depend on which approved installer supplied
 them.
 
-Once Node.js works, run the template's read-only readiness check:
+Once Node.js works, run the template's read-only readiness check from the folder
+you unzipped:
 
 ```bash
 node onboarding/check-prerequisites.js --platform core
 ```
 
-It should report Node.js, npm, Git, template structure, and workspace role as
-ready. `ripgrep` is recommended for later searches but is not required to
-create the copy. The workspace role should be `source-template` at this point.
+It should report Node.js, npm, Git, and template structure as ready. `ripgrep`
+is recommended for later searches but is not required.
 
-Choose an unused folder outside this template, normally a sibling named after
-the app. From the source template's top-level folder—the one containing
-`template-state.json`—run `pwd`. It prints the current absolute path. Remove
-the final `mobile-e2e-template` folder name from that printed path and append
-`example-app-automation`; this produces a sibling path. Replace every
-`/absolute/path/example-app-automation` below with that exact path before
-running the command.
+Record the project setup so the decisions are documented. Copy
+`onboarding/PROJECT-SETUP-TEMPLATE.md` to `app-map/PROJECT-SETUP.md` and fill it
+by hand, recording `manual-only` as the authoring route and the project's
+non-secret approval decisions. Do not store credentials, device identifiers, or
+customer data there.
 
-Preview exactly what will be copied:
+Creating a Git repository, adding a remote, and pushing it are separate project
+decisions after the copy has been reviewed.
 
-```bash
-node onboarding/create-project-copy.js \
-  --name "Example App" \
-  --destination "/absolute/path/example-app-automation" \
-  --dry-run
-```
-
-The copier uses an exact reusable-file manifest. It excludes `.git`,
-`node_modules`, real `.env` files, credentials, app source/binaries, TestRail
-imports, screenshots, logs, and test results. It refuses an existing
-destination and any destination inside the template.
-
-If the preview is correct, create the folder by repeating the command without
-`--dry-run`:
-
-```bash
-node onboarding/create-project-copy.js \
-  --name "Example App" \
-  --destination "/absolute/path/example-app-automation"
-```
-
-Success is the message `Working copy created` followed by the destination.
-Enter that folder and verify its role:
-
-```bash
-cd "/absolute/path/example-app-automation"
-node -p "require('./template-state.json').workspaceRole"
-```
-
-The second command must print `project-copy`. Close the source template in your
-editor, open this new folder, and perform every remaining step here. The
-original continues to say `source-template`. Fill the new
-`app-map/PROJECT-SETUP.md` by hand, recording `manual-only` as the authoring
-route and the project's non-secret approval decisions.
-
-The copier does not initialise Git. Creating a repository, adding a remote, and
-pushing it are separate project decisions after the destination has been
-reviewed.
-
-After entering the `project-copy`, copy the
+In your copy, copy the
 [test-case worksheet](manual/TEST-CASE-WORKSHEET.md) to
 `app-map/worksheets/<platform>-<section>.md` while designing a section, and use
 the [review checklist](manual/REVIEW-CHECKLIST.md) before merging it.
@@ -309,17 +276,17 @@ specifically requires hardware.
 
 Appium Inspector is an optional desktop viewer that displays the screen elements
 Appium can address. It is useful when proving selectors later, but it is not
-required to create the working copy or run offline checks.
+required to run offline checks.
 
 ### 2.3 Install this repository's packages
 
 `npm ci` installs the exact dependency versions recorded by the selected
-platform package. Run it only in the working copy:
+platform package. Run it only in your copy:
 
 For a standard approved install, run `npm ci` in each platform directory. For
 the strict local-only dependency set, run `npm ci --omit=optional`. These
-commands must be run from `android/` or `ios/` inside the working copy, never
-inside the source template.
+commands must be run from `android/` or `ios/` inside your downloaded copy of
+the template.
 
 ```bash
 cd android                 # use ios for iPhone/iPad
@@ -656,7 +623,7 @@ below and record the decision in the worksheet.
 ### 5.1 The team uses TestRail
 
 Export the relevant approved cases to `testrail-import/` and read them yourself.
-For each proposed automated section, make a working copy:
+For each proposed automated section, make a copy of the worksheet:
 
 ```bash
 cp manual/TEST-CASE-WORKSHEET.md \
@@ -934,7 +901,6 @@ Run the offline publisher and report contract checks:
 node ci/report.self-test.js
 node ci/workflow.self-test.js
 node onboarding/check-prerequisites.self-test.js
-node onboarding/create-project-copy.self-test.js
 ```
 
 Once all values required during module loading are filled, confirm Mocha can

@@ -5,7 +5,7 @@ Beginners should not fill this in. Open Claude Code and type
 
 This is an optional fast path for an experienced user who already knows every
 scope and approval answer. Replace the bracketed values, then paste the prompt
-into Claude Code from the repository root.
+into Claude Code from your downloaded copy of the template.
 
 ```text
 AI-assisted work is approved for this project and for the inputs named below.
@@ -13,7 +13,6 @@ AI-assisted work is approved for this project and for the inputs named below.
 Adapt this mobile E2E template for [APP NAME].
 
 Scope:
-- Working-copy destination: [ABSOLUTE UNUSED PATH OUTSIDE THE TEMPLATE]
 - Policy/approval reference: [REFERENCE]
 - Platforms: [ANDROID / IOS / BOTH]
 - Approved app source: [PATH OR "none"]
@@ -29,17 +28,11 @@ Scope:
 Read CLAUDE.md and AI-GUIDED-WORKFLOW.md first. Work end to end rather than only
 giving me instructions.
 
-Before inspecting Git or any project input, read only `template-state.json`. If
-it says `source-template`, run the safe working-copy command with the app name
-and destination above in `--dry-run` mode, report the exclusions, and ask me to
-approve creation. Then create it and continue only in the new folder where the
-marker says `project-copy`. If the session cannot switch workspace roots, give
-me the exact new path and tell me how to open it and type `continue setup`.
-Before that handoff, save all non-secret scope and approval answers from this
-prompt into the new `app-map/PROJECT-SETUP.md` so setup can resume without
-repeating them. Never save credentials, device identifiers, raw project data,
-or the source template's absolute path there. If the marker is missing/invalid,
-or the destination exists, stop without editing or overwriting anything.
+You are working in a downloaded copy of the template (a detached folder, not
+the shared repository), which is where app-specific work belongs. Save all
+non-secret scope and approval answers from this prompt into
+`app-map/PROJECT-SETUP.md` so setup can resume without repeating them. Never
+save credentials, device identifiers, or raw project data there.
 
 Discover the app identity, navigation, stable selectors, and state requirements
 from approved evidence. If TestRail is used, match its cases from approved

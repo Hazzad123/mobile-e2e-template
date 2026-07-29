@@ -22,10 +22,6 @@ const requiredFiles = [
   "onboarding/PROJECT-SETUP-TEMPLATE.md",
   "onboarding/check-prerequisites.js",
   "onboarding/check-prerequisites.self-test.js",
-  "onboarding/copy-manifest.json",
-  "onboarding/create-project-copy.js",
-  "onboarding/create-project-copy.self-test.js",
-  "template-state.json",
   "app-map/APP-MAP.md",
   "app-map/worksheets/README.md",
 ];
@@ -115,10 +111,10 @@ if (!startHere.toLowerCase().includes("help me get started")) {
   fail("START-HERE.md does not expose the beginner Claude trigger.");
 }
 if (
-  !startHere.includes("source-template")
-  || !startHere.includes("project-copy")
+  !startHere.toLowerCase().includes("download")
+  || !startHere.toLowerCase().includes("zip")
 ) {
-  fail("START-HERE.md does not protect the source template with a working copy.");
+  fail("START-HERE.md does not tell the user to download the template as a Zip.");
 }
 
 const claudeGuide = read("CLAUDE.md");
@@ -148,29 +144,18 @@ for (const requiredPhrase of [
   }
 }
 for (const requiredPhrase of [
-  "create-project-copy.js",
-  "workspaceRole",
-  "project-copy",
+  "downloaded copy of the template",
   "continue setup",
 ]) {
   if (!claudeGuide.includes(requiredPhrase)) {
-    fail(`CLAUDE.md is missing the working-copy rule: ${requiredPhrase}`);
+    fail(`CLAUDE.md is missing the downloaded-copy rule: ${requiredPhrase}`);
   }
 }
-if (!claudeGuide.includes("Workspace isolation gate — always applies")) {
-  fail("CLAUDE.md is missing the global project-copy gate.");
-}
 assertBefore(
   claudeGuide,
-  "Workspace isolation gate — always applies",
-  "## Read first",
-  "CLAUDE.md global isolation sequence",
-);
-assertBefore(
-  claudeGuide,
-  "create-project-copy.js",
-  "Ask whether the app they want to test runs",
-  "CLAUDE.md beginner sequence",
+  "Ask what app material they have",
+  "Determine the platform from the approved source",
+  "CLAUDE.md source-before-platform sequence",
 );
 
 const beginnerRunbook = read("onboarding/BEGINNER-RUNBOOK.md");
@@ -186,22 +171,22 @@ for (const requiredPhrase of [
 }
 assertBefore(
   beginnerRunbook,
-  "## Stage 3: protect the template with a working copy",
-  "## Stage 4: learn the platform in ordinary language",
+  "## Stage 3: find out what app material exists",
+  "## Stage 4: confirm the platform",
   "Beginner runbook sequence",
 );
 assertBefore(
   beginnerRunbook,
-  "create-project-copy.js",
+  "What do you currently have",
   "Does the app you want to test run",
-  "Beginner copy-before-platform sequence",
+  "Beginner material-before-platform sequence",
 );
 
 const guidedWorkflow = read("AI-GUIDED-WORKFLOW.md");
 assertBefore(
   guidedWorkflow,
-  "suggests an unused sibling folder",
-  "asks whether Android, iPhone/iPad, or both",
+  "confirms the platform",
+  "asks where the suite should run first",
   "Claude-guided workflow sequence",
 );
 if (
@@ -214,8 +199,8 @@ if (
 const beginnerExample = read("ai/GET-STARTED.md");
 assertBefore(
   beginnerExample,
-  "Shall I create that working copy now?",
-  "Does the app you want to test run",
+  "Are you allowed to use AI on this project?",
+  "What do you currently have",
   "Beginner conversation sequence",
 );
 for (const requiredPhrase of [
@@ -224,7 +209,7 @@ for (const requiredPhrase of [
   "I’m unsure",
   "LOCAL-LAUNCH-SMOKE",
   "The first test passed",
-  "source template is",
+  "downloaded copy of the template",
 ]) {
   if (!beginnerExample.includes(requiredPhrase)) {
     fail(`The beginner conversation does not reach a concrete first pass: ${requiredPhrase}`);
@@ -247,43 +232,14 @@ if (!advancedStart.includes("optional fast path")) {
   fail("The detailed start prompt must be labelled as an advanced shortcut.");
 }
 if (
-  !advancedStart.includes("Working-copy destination")
-  || !advancedStart.includes("project-copy")
-  || !advancedStart.includes("save all non-secret scope and approval answers")
+  !advancedStart.includes("downloaded copy of the template")
+  || !advancedStart.includes("non-secret scope and approval answers")
 ) {
-  fail("The advanced start prompt does not isolate and persist project-copy setup.");
+  fail("The advanced start prompt does not persist non-secret setup in the downloaded copy.");
 }
 for (const prompt of ["ai/ADD-SECTION.md", "ai/DEBUG-FAILURE.md"]) {
-  if (!read(prompt).includes("verify it says `project-copy`")) {
-    fail(`${prompt} does not refuse work in the source template.`);
-  }
-}
-
-const marker = JSON.parse(read("template-state.json"));
-if (
-  marker.schemaVersion !== 1
-  || marker.templateId !== "mobile-e2e-template"
-  || !["source-template", "project-copy"].includes(marker.workspaceRole)
-) {
-  fail("The repository marker must identify a recognised workspace role.");
-}
-if (marker.workspaceRole === "project-copy") {
-  const setup = read("app-map/PROJECT-SETUP.md");
-  if (!setup.includes("- Workspace role: project-copy")) {
-    fail("A project copy must contain its generated project setup record.");
-  }
-}
-const copyManifest = JSON.parse(read("onboarding/copy-manifest.json"));
-for (const requiredEntry of [
-  "CLAUDE.md",
-  "android/.env.template",
-  "ios/.env.template",
-  "onboarding/create-project-copy.js",
-  "onboarding/create-project-copy.self-test.js",
-  "template-state.json",
-]) {
-  if (!copyManifest.files?.includes(requiredEntry)) {
-    fail(`The safe copy manifest is missing ${requiredEntry}.`);
+  if (!read(prompt).includes("downloaded copy of the template")) {
+    fail(`${prompt} does not assume work happens in the downloaded copy.`);
   }
 }
 
@@ -388,16 +344,12 @@ for (const requiredPhrase of [
     fail(`The manual workflow is missing a zero-prior-knowledge step: ${requiredPhrase}`);
   }
 }
-if (
-  !manualWorkflow.includes("create-project-copy.js")
-  || !manualWorkflow.includes("source-template")
-  || !manualWorkflow.includes("project-copy")
-) {
-  fail("The manual workflow must create an isolated project copy before editing.");
+if (!manualWorkflow.includes("Download this template as a Zip")) {
+  fail("The manual workflow must get an isolated copy by downloading a Zip before editing.");
 }
 assertBefore(
   manualWorkflow,
-  "## 1. Create a separate project working copy",
+  "## 1. Get your own copy of the template",
   "npm ci",
   "Manual install sequence",
 );
@@ -421,7 +373,7 @@ if (/\bClaude (?:can|should)\b/.test(prerequisiteChecker)) {
 }
 assertBefore(
   manualWorkflow,
-  "## 1. Create a separate project working copy",
+  "## 1. Get your own copy of the template",
   "app-map/worksheets/<platform>-<section>.md",
   "Manual worksheet sequence",
 );

@@ -22,9 +22,9 @@ Before adopting this template:
   reviewed local-only manifest/lock or remove the optional integration and
   regenerate the lock.
 
-Once adoption is approved, use the manual or Claude-guided copy step to create
-a separate `project-copy`. Do not put project source, credentials, app binaries,
-case exports, generated evidence, or app-specific edits in the folder marked
-`source-template`.
+Once adoption is approved, work in your own downloaded copy of the template —
+the folder you unzipped. Do not put project source, credentials, app binaries,
+case exports, generated evidence, or app-specific edits into a shared checkout
+of the starter that other projects reuse.
 
 Record the decision or approval reference in each completed section worksheet.

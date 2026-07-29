@@ -88,27 +88,26 @@
       <p>
         Choose MANUAL-WORKFLOW.md when AI is prohibited, or
         AI-GUIDED-WORKFLOW.md when Claude is approved to map and write the tests.
-        New Claude users only need to type “help me get started”. After policy
-        and core-tool checks, Claude makes a separate project working copy; the
-        source template stays unchanged. Manual users make the same safe copy by
-        following the manual guide. Both paths produce the same JavaScript suite.
+        New Claude users only need to type “help me get started”. You work in
+        your own downloaded copy of the template — the folder you unzipped — so
+        there is no copy step; setup happens directly there. Both paths produce
+        the same JavaScript suite.
       </p>
     </header>
 
     <section class="grid">
       <article class="wide">
-        <h2>Protect the template first</h2>
+        <h2>Start in your own copy</h2>
         <div class="flow">
-          <span>source-template</span>
-          <span>safe preview</span>
-          <span>user approval</span>
-          <span>project-copy</span>
+          <span>download Zip</span>
+          <span>unzip</span>
+          <span>open the folder</span>
           <span>app setup</span>
         </div>
         <p>
-          The exact copy manifest leaves behind Git history, dependencies,
-          secrets, app inputs, imports and generated evidence. All installation,
-          configuration and test authoring happens in the new folder.
+          Work in your downloaded copy of the template — the folder you
+          unzipped. It is detached from the shared starter, so all installation,
+          configuration and test authoring happens directly there.
         </p>
       </article>
 
@@ -196,7 +195,7 @@ node ci/report.self-test.js</pre>
       <article class="wide">
         <h2>The safest first milestone</h2>
         <ol>
-          <li>Confirm the working folder is marked <code>project-copy</code>.</li>
+          <li>Confirm you are working in your downloaded copy of the template.</li>
           <li>Prepare the tools, one virtual or physical device, and one app build.</li>
           <li>Map and adapt one non-destructive section; do not run starter placeholders.</li>
           <li>Confirm that focused section passes on the local device.</li>

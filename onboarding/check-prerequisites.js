@@ -370,9 +370,7 @@ const requiredRepoFiles = [
   "android/package.json",
   "ios/package.json",
   "onboarding/BEGINNER-RUNBOOK.md",
-  "onboarding/copy-manifest.json",
-  "onboarding/create-project-copy.js",
-  "template-state.json",
+  "onboarding/PROJECT-SETUP-TEMPLATE.md",
 ];
 const missingRepoFiles = requiredRepoFiles.filter((relativePath) => (
   !fs.existsSync(path.join(root, relativePath))
@@ -384,33 +382,6 @@ add(
   missingRepoFiles.length === 0
     ? "The expected repository files are present."
     : `Missing: ${missingRepoFiles.join(", ")}.`,
-);
-
-let workspaceRole = null;
-try {
-  const marker = JSON.parse(
-    fs.readFileSync(path.join(root, "template-state.json"), "utf8"),
-  );
-  if (
-    marker.schemaVersion === 1
-    && marker.templateId === "mobile-e2e-template"
-    && ["source-template", "project-copy"].includes(marker.workspaceRole)
-  ) {
-    workspaceRole = marker.workspaceRole;
-  }
-} catch {
-  // Report the invalid marker below without exposing its contents.
-}
-add(
-  "core",
-  "Workspace role",
-  workspaceRole ? "pass" : "missing",
-  workspaceRole
-    ? `This folder is marked ${workspaceRole}.`
-    : "template-state.json is missing, malformed, or has an unknown role.",
-  workspaceRole
-    ? undefined
-    : "Do not edit project material until the workspace role is established.",
 );
 
 if (selectedPlatforms.length > 0) {

@@ -5,31 +5,20 @@ before. Claude introduces each tool only when it becomes relevant, explains why
 it is needed, performs checks itself, and reports a visible success signal
 before moving on.
 
-The user starts in the source template with one sentence:
+The user has downloaded the template as a Zip, opened that folder, and starts
+with one sentence:
 
 > **User:** help me get started
 
-Claude responds:
+Claude responds with a single approval question:
 
 > **Claude:** I’ll guide you through this one step at a time. I won’t inspect or
 > change project material until we establish what is allowed.
 >
-> Has your organisation or client explicitly approved using Claude on this
-> project? Reply yes, no, not sure, or “I’m only exploring the template”.
+> Are you allowed to use AI on this project? Reply yes, no, not sure, or “I’m
+> only exploring the template”.
 
 > **User:** Yes.
-
-> **Claude:** Thanks. This starter template was itself developed with AI
-> assistance. Has your organisation or client approved importing it into this
-> project? You can answer yes, no, or not sure.
-
-> **User:** Yes.
-
-> **Claude:** Understood. Does your organisation require an approval ticket,
-> link, person’s name, or date to be recorded for that decision? “No reference
-> required” is a complete answer.
-
-> **User:** No reference required.
 
 Claude runs the basic check itself. It does not ask the user to open another
 terminal or paste command output:
@@ -37,59 +26,51 @@ terminal or paste command output:
 > **Claude:** The setup programs can run. Node.js is available to run the setup
 > and tests, npm is available to install the project’s JavaScript tools, and Git
 > is available to track later project changes. I haven’t installed anything,
-> inspected app data, or changed the template.
+> inspected app data, or changed anything.
 >
-> Before configuring an app, I’ll make a separate working copy so this starter
-> stays unchanged. What app or project name should I use?
+> To choose a first test I need to know the app. What do you currently have: the
+> app’s source code, an installable file (an APK for Android or an IPA for
+> iPhone/iPad), the app already installed on a test phone, or are you not sure?
 
-> **User:** Example App.
+> **User:** I downloaded an Android install file, but I don’t know its exact
+> path.
 
-> **Claude:** I suggest
-> `/Users/alex/Projects/example-app-automation`. This folder will sit beside the
-> template, not inside it. Is that location acceptable?
+> **Claude:** An Android install file normally ends in `.apk`. I can search only
+> your Downloads folder for APK filenames and will not open other files. Shall I
+> search that folder?
 
 > **User:** Yes.
 
-Claude previews the copy before writing anything:
-
-> **Claude:** The preview passed. It will copy only the reusable test framework
-> and guides. It will leave behind the template’s Git change history, installed
-> tool folders, private local settings files (`.env`), credentials, app
-> source/installers, TestRail exports, screenshots, logs, and test results. The
-> destination does not exist, so nothing will be overwritten.
-> Shall I create that working copy now?
+> **Claude:** I found one candidate:
+> `/Users/alex/Downloads/example-app-debug.apk`. I have not opened or installed
+> it. Shall I inspect this exact file for its technical app identity? Because it
+> is an APK, this will be an Android setup.
 
 > **User:** Yes.
 
-Claude creates the copy and verifies that the new folder is marked as a project
-copy. If the current session cannot safely switch its workspace, Claude gives
-one action that matches the user’s interface:
+Claude reads the identity from the approved file and lets the platform follow
+from it, rather than asking:
 
-> **Claude:** Your working copy is ready at
-> `/Users/alex/Projects/example-app-automation`, and I verified that it is
-> marked as the editable project copy. The original template is unchanged.
-> Claude limits its work to the folder it was opened in, so reopening from the
-> new path ensures every later change goes into your project copy.
+> **Claude:** I verified the package as `com.example.app`. An APK is an Android
+> app, so I’ll set up Android automation.
 >
-> In a terminal, run
-> `cd "/Users/alex/Projects/example-app-automation" && claude`. When Claude
-> opens, will you type `continue setup`?
+> Where should this suite run to start with: only on a local device or emulator
+> on this computer, on BrowserStack (a paid service that runs the app on hosted
+> devices), or in a pipeline (an automated job that runs it without anyone
+> starting it)? Whatever you choose, I’ll prove the first test on a local device
+> first.
 
-> **User:** continue setup
+> **User:** Local only for now.
 
-> **Claude:** I’ve confirmed this is the separate Example App working copy and
-> resumed your saved setup. Does the app you want to test run on Android,
-> iPhone/iPad, or both?
+Claude records that choice and keeps external services off:
 
-> **User:** Android.
-
-Claude checks the Android tools without contacting a phone:
-
-> **Claude:** The Android device tools are ready, but Appium is missing. Appium
-> is the local service that lets a JavaScript test control an app on a phone or
-> virtual phone. Installing Appium adds a command-line program to this machine;
-> it does not inspect the app or contact a device. Shall I install the
-> template's pinned Appium 2.19.0 using the Node.js package installer already
+> **Claude:** Understood — local only. I’ll leave BrowserStack and any pipeline
+> off unless you ask for them later. Checking the Android tools now without
+> contacting a phone: the Android device tools are ready, but Appium is missing.
+> Appium is the local service that lets a JavaScript test control an app on a
+> phone or virtual phone. Installing Appium adds a command-line program to this
+> machine; it does not inspect the app or contact a device. Shall I install the
+> template’s pinned Appium 2.19.0 using the Node.js package installer already
 > available here?
 
 > **User:** Yes.
@@ -130,37 +111,24 @@ Claude explains the choice and recommends a safe starting point:
 
 > **User:** Yes.
 
-Claude starts the emulator and verifies the connection:
+Claude starts the emulator, then installs the app it already identified:
 
 > **Claude:** The `Pixel 8 API 35` emulator is running, Android reports it as
-> connected, and it is ready for an app. What app material do you currently
-> have: the source-code folder, a file that can be installed on Android, the app
-> already installed on a test device, or are you unsure?
-
-> **User:** I downloaded an Android install file, but I don’t know its exact
-> path.
-
-> **Claude:** An Android install file normally ends in `.apk`. I can search only
-> your Downloads folder for APK filenames and will not open other files. Shall I
-> search that folder?
+> connected, and it is ready for an app. I already verified the package
+> `com.example.app` from the APK you approved. Shall I install that exact APK on
+> `Pixel 8 API 35` and open it?
 
 > **User:** Yes.
 
-> **Claude:** I found one candidate:
-> `/Users/alex/Downloads/example-app-debug.apk`. I have not opened or installed
-> it. Shall I inspect this exact file for its technical app identity and install
-> it on the approved emulator?
+Claude installs the build, opens it, and asks separately before reading any
+generated evidence:
 
-> **User:** Yes.
-
-Claude verifies the app identity, installs it, and opens it:
-
-> **Claude:** I verified the package as `com.example.app`, installed that exact
-> APK on `Pixel 8 API 35`, and confirmed the app opens. To choose a reliable
-> first check, I need to generate a screenshot and a screen-element list, which
-> is the local technical description of the visible buttons and text. These
-> files may contain app text and will remain inside the ignored local results
-> folder. Shall I generate and inspect that evidence?
+> **Claude:** I installed that exact APK on `Pixel 8 API 35` and confirmed the
+> app opens. To choose a reliable first check, I need to generate a screenshot
+> and a screen-element list, which is the local technical description of the
+> visible buttons and text. These files may contain app text and will remain
+> inside the ignored local results folder. Shall I generate and inspect that
+> evidence?
 
 > **User:** Yes.
 
@@ -174,8 +142,8 @@ Claude keeps the first run local and does not invent external case references:
 
 > **Claude:** Understood. TestRail publishing will remain off. For this local
 > test I’ll enable the explicit local-only setting and use the descriptive
-> `LOCAL-LAUNCH-SMOKE` label instead of inventing a `C` case number. The
-> supplied cloud/TestRail matrix will remain disabled. I propose one
+> `LOCAL-LAUNCH-SMOKE` label instead of inventing a `C` case number. BrowserStack
+> and any pipeline stay off, matching your local-only choice. I propose one
 > non-destructive test: launch Example App and confirm that the `Welcome`
 > heading and `Sign in` button are visible. It will not sign in, submit a form,
 > create an account, or change app data. Shall I write, add, and run only that
@@ -194,9 +162,8 @@ checks that the suite loads, starts Appium, and runs the focused test:
 > - **Focused command:** `npm run test:launch-smoke`.
 > - **Safety:** no account or app data was created or changed; nothing was
 >   uploaded; BrowserStack and TestRail stayed off.
-> - **Workspace:** all project files are in
->   `/Users/alex/Projects/example-app-automation`; the source template is
->   unchanged.
+> - **Workspace:** all project files are in the downloaded copy of the template
+>   you opened; nothing was uploaded and the changes are local.
 >
 > The next useful step is to agree the first real user journey. Would you like
 > me to propose that next test?
@@ -205,3 +172,5 @@ This is an illustrative conversation, so tool versions, emulator names, app
 identifiers, paths, and screen text will differ on a real project. Claude must
 derive them from the user’s approved machine, app, and device rather than
 copying the example values.
+</content>
+</invoke>

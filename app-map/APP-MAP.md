@@ -5,8 +5,8 @@
 > it up to date as the app changes. Platform section selectors should agree
 > with this file.
 >
-> Fill this only in a folder whose root `template-state.json` says
-> `project-copy`; never adapt the source template.
+> Fill this in your downloaded copy of the template — the folder you unzipped —
+> not in a shared checkout of the starter itself.
 >
 > Delete this note and fill in the sections below. Anything left as
 > `__PLACEHOLDER__` or `TODO` is not done yet. Use `not supported` for a

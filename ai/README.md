@@ -2,14 +2,16 @@
 
 ## New users
 
-Do not fill in a form. Open Claude Code in the source template folder and type:
+Do not fill in a form. Open Claude Code in your downloaded copy of the template
+and type:
 
 > help me get started
 
 Claude will ask one focused question at a time and perform the technical checks.
-It will keep the source template unchanged and create a separate working copy
-before app-specific setup. See [GET-STARTED.md](GET-STARTED.md) for a complete
-example from the first message through a passing local test.
+Because you are already working in your downloaded copy of the template, there
+is no copy step; setup happens directly in that folder. See
+[GET-STARTED.md](GET-STARTED.md) for a complete example from the first message
+through a passing local test.
 
 ## Experienced users
 
@@ -21,10 +23,9 @@ for the specific project inputs and actions:
 3. `DEBUG-FAILURE.md` — investigate evidence and fix an existing failure.
 
 Fill every bracketed field before pasting a prompt. `CLAUDE.md` supplies the
-standing architecture, evidence, safety, coding, and validation rules.
-New-app adaptation may begin in the source template only to create the named
-working copy; add-section and debug prompts must run inside an existing folder
-marked `project-copy`.
+standing architecture, evidence, safety, coding, and validation rules. Run
+every prompt inside your downloaded copy of the template — the folder you
+unzipped — not in a shared checkout of the starter itself.
 
 The prompts do not authorize uploads, TestRail writes, paid device runs,
 repository publication, or destructive app actions unless their filled scope

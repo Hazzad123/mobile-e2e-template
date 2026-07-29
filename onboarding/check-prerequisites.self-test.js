@@ -7,9 +7,6 @@ const { spawnSync } = require("child_process");
 const root = path.resolve(__dirname, "..");
 const checker = path.join(__dirname, "check-prerequisites.js");
 const sentinelSecret = "DO_NOT_PRINT_THIS_SECRET_7f3b";
-const expectedWorkspaceRole = JSON.parse(
-  require("fs").readFileSync(path.join(root, "template-state.json"), "utf8"),
-).workspaceRole;
 
 function run(args, extraEnv = {}) {
   return spawnSync(process.execPath, [checker, ...args], {
@@ -38,12 +35,6 @@ assert.strictEqual(parsed.summary.platform, "core");
 assert.deepStrictEqual(parsed.summary.checkedPlatforms, []);
 assert.ok(parsed.results.some((item) => item.name === "Node.js"));
 assert.ok(parsed.results.some((item) => item.name === "Template structure"));
-assert.ok(
-  parsed.results.some(
-    (item) => item.name === "Workspace role"
-      && item.detail === `This folder is marked ${expectedWorkspaceRole}.`,
-  ),
-);
 
 const invalid = run(["--platform", "windows-phone"]);
 assert.strictEqual(invalid.status, 2, "Invalid platform should return exit code 2");

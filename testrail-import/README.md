@@ -1,8 +1,8 @@
 # Optional TestRail case export
 
-Use this location only inside a separate folder whose root
-`template-state.json` says `project-copy`. Never add a TestRail export to the
-source template.
+Use this location inside your downloaded copy of the template — the folder you
+unzipped. Do not add a TestRail export to a shared checkout of the starter
+itself.
 
 Place an approved CSV export of the existing TestRail cases here when available.
 Include at least Case ID and Title; Preconditions and Steps make scope matching

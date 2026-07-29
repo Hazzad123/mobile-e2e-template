@@ -1,8 +1,7 @@
 # Optional local app source
 
-Use this location only inside a separate folder whose root
-`template-state.json` says `project-copy`. Never add app source to the source
-template.
+Use this location inside your downloaded copy of the template — the folder you
+unzipped. Do not add app source to a shared checkout of the starter itself.
 
 Place approved app source here only when the project's rules allow it. One or
 both platforms can be present:

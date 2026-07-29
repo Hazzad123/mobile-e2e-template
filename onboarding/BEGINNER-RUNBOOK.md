@@ -33,13 +33,11 @@ tested.
    and receiving approval.
 9. Never print secret values. Refer only to variable names and whether they are
    present.
-10. Never edit or configure a workspace whose `template-state.json` says
-    `source-template`.
-11. Keep going until the first focused test is working or one genuine external
+10. Keep going until the first focused test is working or one genuine external
     blocker remains.
-12. Use neutral, adult language. Avoid “just”, “simply”, “obviously”, “easy”,
+11. Use neutral, adult language. Avoid “just”, “simply”, “obviously”, “easy”,
     “don’t worry”, childish analogies, quizzes, and praise for routine answers.
-13. When a human action cannot be automated, give one exact command or menu
+12. When a human action cannot be automated, give one exact command or menu
     action, say why it is needed, describe the visible success signal, and
     recheck it before moving on.
 
@@ -71,31 +69,36 @@ or decision, not another block of terminology.
 The first response should be friendly and short:
 
 > Absolutely — I’ll guide you one step at a time and do the technical checks
-> for you. Before I look at any app code or project data: is using Claude
-> approved for this project? You can answer “yes”, “no”, “not sure”, or “I’m
-> only exploring the template”.
+> for you. Before I look at any app code or project data: are you allowed to use
+> AI on this project? You can answer “yes”, “no”, “not sure”, or “I’m only
+> exploring the template”.
+
+This one question stands in for what used to be three separate ones (approval,
+AI-provenance, and an approval reference). Keep Stage 1 to this single question.
 
 Do not inspect `app-under-test/`, `testrail-import/`, `.env` files, screenshots,
 logs, app binaries, or connected-device contents before the answer permits it.
 
 - **Yes:** record the answer and continue.
 - **Only exploring:** explain that Claude can give a generic, read-only template
-  tour and core-tool check, but cannot create a project copy or perform app work
-  until project-specific AI approval is explicit.
+  tour and core-tool check, but cannot read project inputs or perform app work
+  until AI approval is explicit.
 - **No/not sure:** do not inspect project inputs or author tests. Explain that
   the manual route exists and point to `MANUAL-WORKFLOW.md`.
 
-After a “yes”, ask the next question:
-
-> This starter template was itself developed with AI assistance. Has your
-> organisation or client approved importing it into this project? You can
-> answer “yes”, “no”, or “not sure”.
-
-If no or uncertain, explain `PROVENANCE.md` and stop before project inspection.
-If yes, ask whether their organisation requires an approval ticket, link, name,
-or date to be recorded. “No reference required” is a complete answer.
+This starter template was itself developed with AI assistance. `PROVENANCE.md`
+records that for teams that want the detail, but it is no longer a separate
+blocking question. If the user raises provenance or asks for an approval
+reference, note their answer in the setup record and continue; do not turn it
+into its own gate.
 
 ## Stage 2: check the basic machine automatically
+
+This runbook assumes the user is already working in their own copy of the
+template — a folder unzipped from a download, not the shared template
+repository. `START-HERE.md` gives that as the first step. Because that copy is a
+detached folder, there is nothing to copy in place and no workspace marker to
+check; app work happens right here.
 
 Run:
 
@@ -117,86 +120,56 @@ method and obtain approval before changing software outside the repository.
 After each change, rerun the same check and say which item now reports
 “ready”. Do not make the user decide whether installation output looks correct.
 
-## Stage 3: protect the template with a working copy
+Once the core tools report ready, create the setup record so a later
+`continue setup` can resume: copy `onboarding/PROJECT-SETUP-TEMPLATE.md` to
+`app-map/PROJECT-SETUP.md` if it does not already exist, and record
+`Claude-guided` as the authoring route, the non-secret approval decision, and
+the core-readiness result. Do not store credentials, device identifiers, or
+customer data in it.
 
-Read only `template-state.json`.
+## Stage 3: find out what app material exists
 
-If its `workspaceRole` is `source-template`, do not inspect Git status, install
-dependencies, create `.env` files, add app/TestRail material, or make
-app-specific edits in this folder. The next turn should say:
+With the tools ready, ask one direct question, leading with source code:
 
-> The basic tools are ready. Before we configure an app, I’ll make a separate
-> working copy so this starter stays unchanged. What app or project name should
-> I use?
+> What do you currently have: the app’s source code, an installable app file
+> (an APK for Android or an IPA for iPhone/iPad), the app already installed on a
+> test phone, or are you not sure?
 
-After the user supplies a name, create a readable lower-case slug and suggest an
-unused sibling folder, for example:
+Source code means the files maintained by the app developers. Ask for it first,
+because having it lets Claude derive the app’s identity, its selectors, and
+usually the platform itself, which removes questions the user would otherwise
+have to answer. An APK is an installable Android app file; an IPA is an
+installable iPhone/iPad app file. Explain only the options relevant to the
+answer. Ask permission for the exact local path before reading it, and help the
+user locate approved material rather than expecting them to know the template
+folder names.
 
-> I suggest `/approved/parent/example-app-automation`. This will sit beside the
-> template, not inside it. Is that location okay?
+Once approved, Claude should:
 
-Do not create anything yet. If the user wants another location, help them choose
-one absolute path and ask only whether that path is acceptable.
+1. place or reference source under `app-under-test/` only if policy allows;
+2. identify the app name, Android package/activity, or iOS bundle ID;
+3. note the platform the source implies, to confirm at the next stage;
+4. copy the relevant `.env.template` to `.env`;
+5. fill only verified, non-secret values;
+6. tell the user which secret/account values still need an approved source.
 
-After the location is agreed, run the safe preview:
+Do not print `.env` contents or credentials.
 
-```bash
-node onboarding/create-project-copy.js \
-  --name "Example App" \
-  --destination "/absolute/path/example-app-automation" \
-  --dry-run \
-  --json
-```
+If the user has no source and only an installable file or an installed app,
+Claude derives the same identifiers from that approved build instead, and the
+platform follows from the file type (APK → Android, IPA → iPhone/iPad).
 
-Translate the result:
+## Stage 4: confirm the platform
 
-> The preview is ready. It will copy only the reusable template files. It will
-> leave behind Git history, installed packages, `.env` files and credentials,
-> app source/binaries, TestRail imports, screenshots, logs and test results.
-> The destination does not exist, so nothing will be overwritten. Shall I
-> create that working copy now?
+If Stage 3 gave Claude the source, infer the platform from it — an Android
+Studio or Gradle project means Android, an Xcode project means iPhone/iPad, and
+a React Native or Flutter project usually means both — and confirm rather than
+ask:
 
-Only after “yes”, repeat the command without `--dry-run`. The command writes a
-`project-copy` marker and a non-secret `app-map/PROJECT-SETUP.md` record. Update
-that record in the destination with `Claude-guided` as the authoring route, the
-AI/provenance decisions and non-secret approval reference already answered, and
-the completed core-readiness result. Do not store the source template's
-absolute path, credentials, device identifiers, or customer data.
+> This looks like an Android project, so I’ll set up Android automation. Have I
+> got that right?
 
-Do not initialise Git, add a remote, install packages, or bring project inputs
-across during copying. Those are separate later decisions. Never merge into or
-overwrite an existing destination.
-
-Continue every later stage only in a folder whose marker says `project-copy`.
-If the current Claude session cannot change its workspace root, give exactly
-one surface-specific next action. For the Claude Code CLI, provide the exact
-quoted path:
-
-> In a terminal, run
-> `cd "/absolute/path/example-app-automation" && claude`. When Claude opens,
-> type `continue setup`.
-
-For an editor, name its exact **File → Open Folder…** action, give the path to
-select, and say to type `continue setup` after Claude opens there. If Claude
-cannot tell which surface the user has, ask “Are you using Claude in a terminal
-or in an editor?” as the only question.
-
-When the user types `continue setup`, read only `template-state.json` and
-`app-map/PROJECT-SETUP.md` first. If the role is `project-copy`, resume at the
-next unresolved stage and do not repeat the copy conversation. If the marker is
-valid but the setup record is missing, remain read-only and ask whether to
-recreate a blank record and re-establish the approvals before continuing.
-
-If the marker already says `project-copy`, skip this stage and resume from the
-setup record. If the marker is missing, malformed, or has another role, do not
-guess that edits are safe. A user saying it was intended as a copy is not enough
-to write a replacement marker. Remain read-only and ask whether they can return
-to a known source template to create a verified copy, or ask a maintainer to
-restore the marker from trusted project history.
-
-## Stage 4: learn the platform in ordinary language
-
-Ask:
+Only ask openly when the platform cannot be derived:
 
 > Does the app you want to test run on Android, iPhone/iPad, or both? If you’re
 > not sure, tell me what kind of phone it runs on.
@@ -254,28 +227,21 @@ Use `npm ci --omit=optional` when they may not. Explain that the committed lock
 still contains optional dependency metadata and link `PROVENANCE.md` when that
 matters.
 
-## Stage 5: find out what app material exists
+## Stage 5: choose where the test should run
 
-Ask one direct question:
+Ask one plain question:
 
-> What do you currently have: the app’s source code, an APK/IPA file, the app
-> already installed on a test phone, or are you not sure?
+> Where should this suite run? Pick one to start with:
+> - only on a local device or emulator on this computer;
+> - on BrowserStack, a paid service that runs the app on hosted devices;
+> - in a pipeline, where an automated job runs it without anyone starting it.
 
-In this question, source code means the files maintained by the app developers;
-an APK is an installable Android app file; an IPA is an installable
-iPhone/iPad app file. Explain only the options relevant to the answer. Ask
-permission for the exact local path before reading it. Help the user locate
-approved material rather than expecting them to know the template folder names.
-
-Once approved, Claude should:
-
-1. place or reference source under `app-under-test/` only if policy allows;
-2. identify the app name, Android package/activity, or iOS bundle ID;
-3. copy the relevant `.env.template` to `.env`;
-4. fill only verified, non-secret values;
-5. tell the user which secret/account values still need an approved source.
-
-Do not print `.env` contents or credentials.
+Explain each option only as far as the answer needs. Whatever they choose, the
+first test is still proved on a local device first; the choice only decides
+which external stages Claude offers once that local test is green. Record the
+answer in `app-map/PROJECT-SETUP.md`. Setting up BrowserStack or a pipeline
+uploads app/test data or changes repository settings, so both stay off until
+Stage 8 has produced a passing local test and the user approves each one.
 
 ## Stage 6: establish a device and prove app access
 
@@ -356,7 +322,7 @@ Claude should:
 
 1. walk the smallest useful approved user journey;
 2. update `app-map/APP-MAP.md`;
-3. update the `app-map/PROJECT-SETUP.md` created with the working copy;
+3. update the `app-map/PROJECT-SETUP.md` created in Stage 2;
 4. create a section worksheet under `app-map/worksheets/`;
 5. show the user a short plain-English description of the proposed test;
 6. ask whether Claude should implement that proposed first slice;
@@ -373,8 +339,8 @@ they have never encountered.
 After each stage, report the concrete proof in ordinary language:
 
 - core tools: each ready tool and what it will do;
-- working copy: its exact path, its `project-copy` marker, and that the source
-  template was not changed;
+- workspace: the exact folder being used and that it is the user’s own
+  downloaded copy of the template;
 - platform setup: the SDK/toolchain, Appium, platform driver, and project
   packages that now report ready;
 - device: the exact approved device or virtual device visible to the tools;

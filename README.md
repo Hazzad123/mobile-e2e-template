@@ -7,16 +7,16 @@ Claude guide the setup and write the tests, or follow a fully manual process.
 
 ## Choose the authoring path
 
-Brand new to mobile automation? Open Claude Code in the template folder only to
-start setup and type:
+Brand new to mobile automation? Download this template as a Zip, unzip it to a
+folder of your own, open Claude Code in that folder, and type:
 
 > help me get started
 
-Claude will check policy and the basic machine, make a separate working copy,
-then explain each prerequisite, ask one plain-language question at a time, and
-build the first test with the user in that copy. The source template stays
-unchanged. If AI policy is uncertain, start before adding restricted project
-inputs; Claude asks about approval before inspecting them.
+Claude will check whether AI is allowed and the basic machine, then explain each
+prerequisite, ask one plain-language question at a time, and build the first
+test with you in that downloaded copy. If AI policy is uncertain, start before
+adding restricted project inputs; Claude asks about approval before inspecting
+them.
 
 Both routes produce the same reviewable JavaScript sections and use the same
 runtime. Choose per project before sharing any source, test data, or artifacts:
@@ -50,12 +50,12 @@ This starter itself was developed with AI assistance. Read
 [PROVENANCE.md](PROVENANCE.md) before using it where policy also restricts
 AI-authored artifacts, dependency declarations, or software provenance.
 
-The root [template-state.json](template-state.json) identifies this folder as
-`source-template`. Both workflows create a separate folder marked
-`project-copy` before installing dependencies, adding project material, or
-editing tests. The safe copier never carries over Git history, dependencies,
-secrets, app inputs, imports, or generated evidence, and it never overwrites an
-existing destination.
+Both workflows begin by downloading this template as a Zip and working in the
+unzipped folder. Because that folder is detached from the template's shared
+repository, it is already an isolated project copy — there is no in-place copy
+step and no workspace marker. Do not commit Git history, dependencies, secrets,
+app inputs, imports, or generated evidence back into a shared checkout of the
+starter.
 
 The two platform suites intentionally mirror one another. Mobile selectors,
 gestures, capabilities, and recovery behaviour diverge in real apps; keeping the
@@ -106,9 +106,6 @@ CONTRIBUTING.md                  repository rules and review checks
 manual/                          test-case worksheet and human review checklist
 ai/                              ready-to-paste Claude task prompts
 onboarding/                      first-time runbook, readiness checker and setup record
-  create-project-copy.js         safe source-template -> project-copy copier
-  copy-manifest.json             exact reusable files allowed into a new project
-template-state.json              source-template/project-copy safety marker
 app-map/                         screen/navigation/selector source of truth
   worksheets/                    completed per-section design and case mapping
 app-under-test/                  ignored location for app source
@@ -117,8 +114,8 @@ testrail-import/                 ignored location for a TestRail CSV export
 
 ## 1. Map the app
 
-After choosing the permitted route and entering a folder whose marker says
-`project-copy`, put approved app source under `app-under-test/android` and/or
+After choosing the permitted route, in your downloaded copy of the template put
+approved app source under `app-under-test/android` and/or
 `app-under-test/ios`, or inspect a running app locally with Appium Inspector.
 Fill in
 [app-map/APP-MAP.md](app-map/APP-MAP.md) before writing a large regression.
@@ -180,13 +177,13 @@ appium driver install uiautomator2@4.2.9  # Android
 appium driver install xcuitest@9.10.5     # iPhone/iPad; requires macOS and Xcode
 ```
 
-Only in a `project-copy`, and only after adapting one non-destructive section:
+In your downloaded copy, and only after adapting one non-destructive section:
 
 ```bash
 node onboarding/check-prerequisites.js --platform android
 # use --platform ios for iPhone/iPad
 
-cd android                    # or: cd ios, from the project-copy root
+cd android                    # or: cd ios, from your copy's root
 cp .env.template .env
 # fill the verified minimum local values described by the chosen workflow
 npm ci
@@ -263,7 +260,6 @@ cd ../ios && npm run test:testrail
 node ../ci/report.self-test.js
 node ../ci/workflow.self-test.js
 node ../onboarding/check-prerequisites.self-test.js
-node ../onboarding/create-project-copy.self-test.js
 ```
 
 The live smoke publisher is guarded because it writes to TestRail:
@@ -324,8 +320,8 @@ for its exact inputs and outputs.
 
 - Choose and record the permitted authoring route before project material is
   inspected. Do not invoke Claude on a manual-only project.
-- Never adapt a folder marked `source-template`; create and use a
-  `project-copy` first.
+- Work in your downloaded copy of the template, not a shared checkout of the
+  starter.
 - Throwaway signup runs accumulate server-side accounts. Agree a cleanup policy.
 - BrowserStack uploaded app URLs expire; re-upload an old binary when needed.
 - Device names and OS versions change over time. Reconfirm `lib/devices.js`.

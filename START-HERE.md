@@ -5,21 +5,27 @@ iPhone/iPad apps. A test can perform actions on a physical or virtual phone,
 confirm what appears on screen, and report what passed or failed. You can have
 Claude guide setup and write the tests, or use the fully manual process.
 
-## First choose the permitted authoring path
+## First, get your own copy
+
+Download this template as a Zip, unzip it to a folder of your own, and work
+there. That downloaded folder is detached from the template's shared
+repository, so it is already your isolated project copy — there is nothing to
+copy in place and no workspace marker to set.
+
+## Then choose the permitted authoring path
 
 - **No AI permitted:** follow
   [MANUAL-WORKFLOW.md](MANUAL-WORKFLOW.md). A person inspects the app, completes
   the worksheet, writes every JavaScript test, registers it, and runs the
   checks. First confirm the starter itself is allowed by
-  [PROVENANCE.md](PROVENANCE.md), then use its safe copy command to make a
-  separate project folder before editing anything.
+  [PROVENANCE.md](PROVENANCE.md), then work in the folder you unzipped above
+  before editing anything.
 - **Claude permitted for this project:** follow
-  [AI-GUIDED-WORKFLOW.md](AI-GUIDED-WORKFLOW.md). Open Claude Code in the
-  template folder only to start setup and type: **`help me get started`**.
-  Claude checks policy and the basic machine, then creates a separate working
-  copy before any app-specific work. It keeps the template unchanged, explains
-  each requirement, asks one direct question at a time, and writes the first
-  test with the user in the new folder.
+  [AI-GUIDED-WORKFLOW.md](AI-GUIDED-WORKFLOW.md). Open Claude Code in your
+  downloaded copy of the template and type: **`help me get started`**.
+  Claude checks whether AI is allowed and the basic machine, then works with you
+  in that copy. It explains each requirement, asks one direct question at a
+  time, and writes the first test with you.
 
 No technical preparation is required before that sentence. If AI policy is
 uncertain, do not add restricted project material yet; Claude's first question
@@ -31,10 +37,9 @@ Whichever path is chosen, these are the shared outcomes. A manual user performs
 them. Claude performs and explains them during guided onboarding, so guided
 users do not need to edit this checklist themselves:
 
-1. Create and enter a separate folder whose `template-state.json` says
-   `project-copy`; never adapt the `source-template` folder.
+1. Work in your downloaded copy of the template (the folder you unzipped).
 2. Read [README.md](README.md) for the architecture and integrations.
-3. Use approved source in the working copy's `app-under-test/`, or inspect the
+3. Use approved source in your copy's `app-under-test/`, or inspect the
    app on a device.
 4. Complete [app-map/APP-MAP.md](app-map/APP-MAP.md).
 5. Match TestRail cases when the team uses them, or explicitly record the
@@ -55,7 +60,7 @@ Find unfinished setup:
 rg -n "__[A-Z0-9_]+__|TODO" android ios app-map -g '!.env.template'
 ```
 
-For the manual route, the first files to work through in the new copy are:
+For the manual route, the first files to work through in your copy are:
 
 - `app-map/APP-MAP.md`
 - `manual/TEST-CASE-WORKSHEET.md` (copy it; keep the blank template)

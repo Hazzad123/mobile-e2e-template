@@ -10,10 +10,9 @@ Both produce ordinary JavaScript and use the same human review checklist.
 Read [PROVENANCE.md](PROVENANCE.md) before adopting the starter in a restricted
 project.
 
-Before app adaptation, read `template-state.json`. App-specific source,
-configuration, test authoring, dependency installation, and runs belong only
-in a workspace marked `project-copy`; never perform them in the
-`source-template`. Use the chosen workflow to make a safe separate copy first.
+Do app-specific source, configuration, test authoring, dependency installation,
+and runs in your downloaded copy of the template — the folder you unzipped — not
+in a shared checkout of the starter that other projects reuse.
 
 Preserve the execution model:
 
@@ -63,7 +62,6 @@ find android ios ci onboarding -path '*/node_modules' -prune -o \
 node ci/report.self-test.js
 node ci/workflow.self-test.js
 node onboarding/check-prerequisites.self-test.js
-node onboarding/create-project-copy.self-test.js
 ```
 
 Unresolved placeholders are expected only while the repository is still being

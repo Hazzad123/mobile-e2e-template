@@ -15,9 +15,8 @@ Diagnose and fix this failing mobile E2E test:
 - BrowserStack reruns: [APPROVED / NOT APPROVED]
 - TestRail writes: NOT APPROVED unless stated here: [DETAILS]
 
-First read only `template-state.json` and verify it says `project-copy`. If it
-does not, stop before Git inspection, evidence reads, edits, installs, or runs;
-this prompt is for an existing project copy, never the source template.
+This prompt assumes you are working in your downloaded copy of the template
+(a detached folder, not the shared repository), where app-specific work belongs.
 
 Read CLAUDE.md and inspect the test, helper path, failed step, last selector,
 PNG/XML, and relevant Appium/BrowserStack logs. Reproduce when approved.

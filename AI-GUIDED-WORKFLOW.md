@@ -18,38 +18,37 @@ software-origin or dependency rules are recorded in
 
 ## First-time start: type one sentence
 
-If the source template folder is already open in Claude Code, say:
+If your downloaded copy of the template is already open in Claude Code, say:
 
 > help me get started
 
-If it is not open yet, open the template folder in Claude Code first, then type
+If it is not open yet, open your downloaded copy in Claude Code first, then type
 the same sentence. No prior mobile-testing knowledge is required. Do not fill
 in a technical form, find device identifiers, install Appium, or edit private
 settings files first.
 
 If project policy is uncertain, open Claude before placing restricted app
 source, exports, binaries, screenshots, or logs in the repository. Claude's
-first question establishes whether it may inspect project material at all.
-After the policy and core-tool checks, Claude creates a separate working copy
-and performs all app-specific work there. It never adapts the source template.
+first question establishes whether it may inspect project material at all. All
+app-specific work then happens in your downloaded copy of the template.
 
 ## What Claude does during onboarding
 
 Claude reads `onboarding/BEGINNER-RUNBOOK.md` automatically and then:
 
 1. asks one plain-language question at a time;
-2. confirms AI use and this starter's provenance are allowed;
+2. confirms in one question that AI use is approved for this project;
 3. runs the local readiness checker itself;
 4. explains missing tools without assuming prior knowledge;
 5. offers to install or configure one required tool at a time, asking before it
    changes the machine;
-6. asks for the app/project name, suggests an unused sibling folder, previews
-   the safe copy, and creates it only after approval;
-7. continues only where `template-state.json` says `project-copy`;
-8. asks whether Android, iPhone/iPad, or both should work first;
-9. helps locate material the project permits Claude to read: the app’s source
-   code, an installable Android (`.apk`) or iOS (`.ipa`) file, or an app already
-   installed on an approved device;
+6. creates the setup record `app-map/PROJECT-SETUP.md` so setup can resume;
+7. helps locate material the project permits Claude to read, asking for the
+   app’s source code first, then an installable Android (`.apk`) or iOS (`.ipa`)
+   file, or an app already installed on an approved device;
+8. confirms the platform, deriving it from the source where possible;
+9. asks where the suite should run first: only locally, on BrowserStack, or in a
+   pipeline, and keeps external targets off until a local test passes;
 10. derives the technical app, device, and screen-element identifiers instead
     of asking the user to know them;
 11. asks in ordinary language whether the team uses TestRail;
@@ -84,23 +83,17 @@ introduced separately as the platform adapter Appium needs. An emulator or
 simulator is described as a virtual phone on the local computer. The user is
 not quizzed on those names.
 
-The copy preview and creation use
-`onboarding/create-project-copy.js`. Its allow-list excludes Git change
-history, installed tool folders, private `.env` settings and credentials, app
-inputs, TestRail imports, and generated evidence. It refuses to overwrite an
-existing folder and does not create a new Git repository. If Claude needs the
-user to reopen the new folder, it explains that Claude limits its work to the
-folder it was opened in. In the terminal version of Claude Code it gives the
-exact quoted `cd "/path/to/project-copy" && claude` command; in an editor it
-names **File → Open Folder…** and the exact folder to select. The user then
-types `continue setup`; the saved setup record lets Claude resume without
-repeating answered questions.
+Because the user is working in their own downloaded copy of the template, there
+is no in-place copy step and no workspace marker. Claude records the non-secret
+setup decisions in `app-map/PROJECT-SETUP.md`, so typing `continue setup` later
+resumes onboarding without repeating answered questions. That record excludes
+credentials, device identifiers, and raw project data.
 
 ## Safety defaults
 
 First-time onboarding starts with:
 
-- a separate project working copy; the source template remains unchanged;
+- work confined to your downloaded copy of the template;
 - one platform and one local device;
 - BrowserStack, the optional cloud-device service, off;
 - no TestRail publishing;
@@ -144,8 +137,8 @@ Returning users may use:
 For a new app, Claude should do the following work rather than merely describe
 it:
 
-1. confirm `template-state.json` says `project-copy`; never inspect Git,
-   project inputs, or edit tests in `source-template`;
+1. confirm it is working in your downloaded copy of the template, not the shared
+   repository;
 2. inspect only the approved app/TestRail inputs that exist;
 3. identify how the app launches, how the chosen journey works, and the stable
    screen-element identifiers the test will use;
@@ -205,7 +198,6 @@ find android ios ci onboarding -path '*/node_modules' -prune -o \
 node ci/report.self-test.js
 node ci/workflow.self-test.js
 node onboarding/check-prerequisites.self-test.js
-node onboarding/create-project-copy.self-test.js
 ```
 
 Despite their names, the `test:testrail` commands above are offline checks of
