@@ -1,0 +1,37 @@
+{
+  "name": "mobile-e2e-ios",
+  "version": "1.0.0",
+  "private": true,
+  "description": "WebdriverIO and Appium E2E regression template for iOS",
+  "main": "test.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "npm run test:all",
+    "test:all": "wdio run wdio.conf.js",
+    "test:account-setup": "TEST_SECTIONS=account-setup wdio run wdio.conf.js",
+    "test:example": "TEST_SECTIONS=example wdio run wdio.conf.js",
+    "test:ci": "node scripts/run-browserstack-matrix.js",
+    "test:ci:single": "wdio run wdio.conf.js",
+    "test:testrail": "node scripts/testrail.self-test.js",
+    "test:testrail:smoke": "node scripts/testrail.smoke.js"
+  },
+  "dependencies": {
+    "mocha": "11.7.6",
+    "webdriverio": "9.30.0"
+  },
+  "devDependencies": {
+    "@wdio/cli": "9.30.0",
+    "@wdio/globals": "9.29.1",
+    "@wdio/junit-reporter": "9.29.1",
+    "@wdio/local-runner": "9.30.0",
+    "@wdio/mocha-framework": "9.30.0",
+    "@wdio/spec-reporter": "9.29.1"
+  },
+  "optionalDependencies": {
+    "@wdio/browserstack-service": "9.32.1"
+  },
+  "license": "ISC"
+}

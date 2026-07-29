@@ -1,0 +1,27 @@
+{
+  "suiteName": "Example App E2E (Android)",
+  "platform": "android",
+  "status": "PASSED",
+  "total": 3,
+  "passed": 3,
+  "failed": 0,
+  "skipped": 0,
+  "abortReason": null,
+  "results": [
+    {
+      "title": "Example App E2E (Android) C101 App launches",
+      "status": "pass",
+      "durationMs": 1200
+    },
+    {
+      "title": "Example App E2E (Android) C202 [1/2] Opens example screen",
+      "status": "pass",
+      "durationMs": 2300
+    },
+    {
+      "title": "Example App E2E (Android) C202 [2/2] Cancels sensitive action",
+      "status": "pass",
+      "durationMs": 1800
+    }
+  ]
+}

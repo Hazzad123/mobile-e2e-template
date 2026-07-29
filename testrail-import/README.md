@@ -1,24 +1,45 @@
-# testrail-import/
+# Optional TestRail case export
 
-**Drop a CSV export of your existing TestRail test cases here** (optional).
+Use this location only inside a separate folder whose root
+`template-state.json` says `project-copy`. Never add a TestRail export to the
+source template.
 
-## How to export from TestRail
+Place an approved CSV export of the existing TestRail cases here when available.
+Include at least Case ID and Title; Preconditions and Steps make scope matching
+safer. For example:
 
-TestRail → your suite → **Export to CSV**. Include at least the **Case ID** and
-**Title** columns (Steps/Preconditions help too). Save the file in this folder,
-e.g. `testrail-import/cases.csv`.
+```text
+testrail-import/cases.csv
+```
 
-## What it's used for
+This folder is ignored by Git except for this README. Git ignore is not a
+security boundary, so do not place an unapproved export here.
 
-An AI reads this CSV to:
-- learn your existing case ids (the `C123` numbers) so generated tests carry the
-  **right** ids in their titles — results then publish back to the correct cases;
-- group cases into sensible **sections** (matching `TEST_SECTIONS`);
-- avoid re-inventing coverage you've already written down.
+## Manual route
 
-## Notes
+Following [MANUAL-WORKFLOW.md](../MANUAL-WORKFLOW.md), a person reads the CSV,
+copies `manual/TEST-CASE-WORKSHEET.md` to
+`app-map/worksheets/<platform>-<section>.md`, and records:
 
-- **This folder is git-ignored** (except this README).
-- Optional: without a CSV, the AI proposes fresh sections from the app map and
-  you assign TestRail case ids yourself. The `C###` prefix convention still works
-  the day you adopt TestRail.
+- the exact `C###` ID and title;
+- preconditions and data;
+- which steps will be automated;
+- the section key and platform;
+- any deliberate manual-only step.
+
+## Claude-guided route
+
+Following [AI-GUIDED-WORKFLOW.md](../AI-GUIDED-WORKFLOW.md), Claude may read the
+approved CSV, create the same completed worksheet under `app-map/worksheets/`,
+and write tests with the matched IDs. A person reviews the mapping before
+TestRail publication.
+
+In both routes, never invent a case ID. If the team uses TestRail but the
+approved case evidence is missing, leave the mapping unresolved until a person
+verifies or creates the case through the team's normal process.
+
+If the team does not use TestRail, no export belongs here. Record
+`unmapped (local-only)` in the worksheet, use a descriptive `LOCAL-*` label,
+and set `ALLOW_UNMAPPED_TESTRAIL_CASES=true` only in the private local `.env`.
+That route cannot run through the supplied BrowserStack/CI matrix or publish to
+TestRail.

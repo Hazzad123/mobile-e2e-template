@@ -1,233 +1,340 @@
-# Mobile E2E Test Template (Appium + Mocha → BrowserStack → TestRail)
+# Mobile E2E regression template
 
-A ready-to-clone template for **end-to-end (E2E) mobile app testing**. You point
-it at your app, and it runs your tests on **real devices in the cloud**
-(BrowserStack), reports pass/fail to **TestRail**, and is triggered from
-**Bitbucket Pipelines** — no local setup needed just to run a regression.
+This is a reusable starting point for automated checks of Android and
+iPhone/iPad apps. A test can perform actions on a physical or virtual phone,
+confirm what appears on screen, and report what passed or failed. You can have
+Claude guide the setup and write the tests, or follow a fully manual process.
 
-> **New to this?** No problem. Terms are defined the first time they appear:
-> - **E2E test** — a test that drives the real app like a user (tap, type, check).
-> - **Appium** — the tool that controls a phone/app for tests.
-> - **Mocha** — the test runner that organises tests and reports results.
-> - **BrowserStack App Automate** — a cloud full of real phones you run tests on.
-> - **TestRail** — a place to track test cases and their pass/fail history.
-> - **Bitbucket Pipelines** — Bitbucket's CI: it runs jobs when you click a button.
-> - **Selector** — how a test finds a button/field on screen (e.g. its id).
+## Choose the authoring path
 
-There are **two ways** to use this template and **both work end to end**:
+Brand new to mobile automation? Open Claude Code in the template folder only to
+start setup and type:
 
-| Path | Who it's for | Where to go |
+> help me get started
+
+Claude will check policy and the basic machine, make a separate working copy,
+then explain each prerequisite, ask one plain-language question at a time, and
+build the first test with the user in that copy. The source template stays
+unchanged. If AI policy is uncertain, start before adding restricted project
+inputs; Claude asks about approval before inspecting them.
+
+Both routes produce the same reviewable JavaScript sections and use the same
+runtime. Choose per project before sharing any source, test data, or artifacts:
+
+| Project policy | Start here | Who writes the tests |
 |---|---|---|
-| 🤖 **AI-guided** (recommended) | anyone — the AI does the heavy lifting | open the repo, say *"help me set up automated tests for my app"* → it follows [`CLAUDE.md`](CLAUDE.md) |
-| 🧑 **Manual** | you'd rather follow steps yourself | this README, top to bottom |
+| Generative AI is prohibited or unavailable, and this starter is approved | [Manual-only workflow](MANUAL-WORKFLOW.md) | A person maps, codes, registers, and validates every test |
+| Claude is approved for the project | [Claude-guided workflow](AI-GUIDED-WORKFLOW.md) | Claude leads setup from zero, checks prerequisites, maps the app and writes the tests |
 
-Everything the AI does has a manual equivalent here, so you're never stuck.
+The manual route does not depend on an AI conversation. The Claude route
+includes ready-to-paste prompts under `ai/` and standing instructions in
+`CLAUDE.md`; the prompts are optional shortcuts for experienced users. Both
+produce ordinary CommonJS files, so a suite started with Claude can be
+maintained entirely by hand later.
 
----
+## How the pieces fit together
 
-## How it's organised
+You do not need to understand these tools before choosing a route. They are
+introduced when they become relevant:
 
+- WebdriverIO runs the written test steps and reports pass or fail.
+- Appium is a local service that carries those actions to the app.
+- Android's UiAutomator2 driver or Apple's XCUITest driver connects Appium to
+  that platform.
+- BrowserStack can run the same tests on hosted devices when external uploads
+  are approved.
+- TestRail can connect results to an existing team test-case catalogue. It is
+  not required for the first local test.
+
+This starter itself was developed with AI assistance. Read
+[PROVENANCE.md](PROVENANCE.md) before using it where policy also restricts
+AI-authored artifacts, dependency declarations, or software provenance.
+
+The root [template-state.json](template-state.json) identifies this folder as
+`source-template`. Both workflows create a separate folder marked
+`project-copy` before installing dependencies, adding project material, or
+editing tests. The safe copier never carries over Git history, dependencies,
+secrets, app inputs, imports, or generated evidence, and it never overwrites an
+existing destination.
+
+The two platform suites intentionally mirror one another. Mobile selectors,
+gestures, capabilities, and recovery behaviour diverge in real apps; keeping the
+platform trees explicit makes each suite straightforward to debug and lets
+either one run or be copied independently.
+
+## Technical reference: what is already wired
+
+Guided users do not need to learn this architecture before typing
+`help me get started`. Manual users encounter each part in order in
+[MANUAL-WORKFLOW.md](MANUAL-WORKFLOW.md).
+
+- WebdriverIO runner with Appium UiAutomator2 and XCUITest capabilities.
+- Optional `@wdio/browserstack-service` integration with Test Observability
+  enabled and selector self-healing disabled.
+- BrowserStack device matrices with isolated sessions and configurable parallelism.
+- Per-test BrowserStack annotations, session names, final pass/fail status, video
+  timestamps, and direct session links.
+- One retry, recovery between failures, a consecutive-failure circuit breaker,
+  screenshots, page-source dumps, JSON/Markdown summaries, and JUnit XML.
+- Mandatory TestRail publication after every CI matrix run.
+- Monthly TestRail plan lookup/creation and one configured run per device.
+- Bitbucket on-demand pipelines for both platforms or either platform alone.
+- A final report step that always runs and owns the real pipeline verdict.
+- BrowserStack upload and Firebase App Distribution download utilities.
+- Offline TestRail, CI-report, and workflow-documentation self-tests.
+
+## Repository layout
+
+```text
+android/                         complete Android WDIO suite
+  wdio.conf.js                   local/BrowserStack capabilities and service
+  test.js                        hooks, retries, recovery, reporting, section order
+  lib/                           driver, element, helpers, timings, devices
+  sections/                      app-specific tests and selectors
+  scripts/                       matrix runner and TestRail publisher
+ios/                             complete iOS sibling suite
+ci/
+  upload-to-browserstack.js      APK/IPA -> bs:// URL
+  fetch-firebase-release.js      optional Firebase release download
+  report.js                      combined output and final verdict
+bitbucket-pipelines.yml          three on-demand regression pipelines
+MANUAL-WORKFLOW.md               end-to-end human setup and test-authoring guide
+AI-GUIDED-WORKFLOW.md            end-to-end Claude setup and authoring guide
+CLAUDE.md                        evidence, coding, safety, and validation rules
+PROVENANCE.md                    starter origin and stricter policy boundary
+CONTRIBUTING.md                  repository rules and review checks
+manual/                          test-case worksheet and human review checklist
+ai/                              ready-to-paste Claude task prompts
+onboarding/                      first-time runbook, readiness checker and setup record
+  create-project-copy.js         safe source-template -> project-copy copier
+  copy-manifest.json             exact reusable files allowed into a new project
+template-state.json              source-template/project-copy safety marker
+app-map/                         screen/navigation/selector source of truth
+  worksheets/                    completed per-section design and case mapping
+app-under-test/                  ignored location for app source
+testrail-import/                 ignored location for a TestRail CSV export
 ```
-automation.config.js     ⭐ the ONE file you edit for your app (ids, devices, TestRail)
-.env.example             copy to .env for local runs (secrets, your device UDID)
-test.js                  Mocha entrypoint (don't edit)
-bitbucket-pipelines.yml  the 3 pipelines
-browserstack.yml         BrowserStack SDK config (auto-filled — don't edit)
 
-core/                    🔒 the engine — you never edit this
-platforms/ios/           iOS device list + page objects (you fill in selectors)
-platforms/android/       Android device list + page objects
-specs/                   your tests (one file per section; platform-agnostic)
+## 1. Map the app
 
-app-under-test/          📥 drop your app source here (git-ignored)
-testrail-import/         📥 drop a TestRail CSV export here (git-ignored)
-app-map/APP-MAP.md       🗺️ the map of your app's screens + selectors
+After choosing the permitted route and entering a folder whose marker says
+`project-copy`, put approved app source under `app-under-test/android` and/or
+`app-under-test/ios`, or inspect a running app locally with Appium Inspector.
+Fill in
+[app-map/APP-MAP.md](app-map/APP-MAP.md) before writing a large regression.
+Source is optional and must not be copied when policy forbids it. Both workflow
+guides cover source-free inspection.
+
+Prefer stable accessibility identifiers:
+
+- `~identifier` — accessibility ID on both platforms.
+- `#resource_id` — Android resource ID; the driver prefixes `APP_PACKAGE`.
+- `android=...` — Android UiSelector.
+- `//...` — XPath, including `XCUIElementType*` expressions on iOS.
+
+## 2. Generalise the worked sections
+
+The two sections are deliberately small:
+
+- `account-setup.js` is registered first and demonstrates launch verification
+  plus creation of a unique throwaway account.
+- `example.js` demonstrates navigation, scrolling, a multi-part TestRail case,
+  and stopping at Cancel before an irreversible action.
+
+Do not run either starter section unchanged. Replace every active
+`__PLACEHOLDER__` in the section you are adapting, prove its selectors and
+expected results, and register only intended tests. A person can do this line
+by line, or Claude can perform the implementation on an approved project.
+
+When the team uses TestRail, keep its verified case IDs in the test title. One
+case may span multiple `it` blocks:
+
+```js
+it("C123 [1/2] User opens settings", async function () { /* ... */ });
+it("C123 [2/2] User cancels deletion", async function () { /* ... */ });
 ```
 
-**The mental model:** a **spec** (in `specs/`) says *what* to test; a **page
-object** (in `platforms/<platform>/pages/`) says *how* to do it on each platform.
-One spec drives both iOS and Android.
+The publisher merges repeated case IDs; fail wins over pass, and pass wins over
+blocked. A title may also contain multiple IDs (`C123/C456`) when one automated
+check legitimately covers several existing cases.
 
----
+For a first local test on a project without TestRail, set
+`ALLOW_UNMAPPED_TESTRAIL_CASES=true` in that platform's private `.env`. The
+runtime then gives unmapped tests deterministic `LOCAL-*` labels. This mode
+cannot be used by BrowserStack, CI, or the TestRail publisher.
 
-## Prerequisites
+Add a section by copying `sections/example.js`, choosing a lowercase section
+key, adding that key to `SECTION_KEYS`, and requiring it in the fixed order at
+the bottom of `test.js`. Make the same intentional change in each supported
+platform.
 
-- **Node.js 20+** (`node -v`). Only needed for local runs — the cloud pipeline
-  provides its own.
-- A **BrowserStack App Automate** account.
-- *(Optional)* a **TestRail** account, if you want case-level reporting.
-- *(Optional, for local runs)* Appium + a simulator/emulator. See below.
+## 3. Run locally
 
----
-
-## One-time admin setup (do this once per repo)
-
-### 1. Enable Pipelines
-Bitbucket → **Repository settings → Pipelines → Settings → Enable**.
-
-### 2. Add repository variables
-Bitbucket → **Repository settings → Pipelines → Repository variables**. These are
-the only secrets the pipeline needs (app ids live in `automation.config.js`, not
-here):
-
-| Variable | Example | Secured? | What it's for |
-|---|---|---|---|
-| `BROWSERSTACK_USERNAME` | `janedoe_ab12CD` | no | BrowserStack login |
-| `BROWSERSTACK_ACCESS_KEY` | `xxxxxxxx` | **yes** | BrowserStack login |
-| `TESTRAIL_BASE_URL` | `https://acme.testrail.io` | no | your TestRail site |
-| `TESTRAIL_USERNAME` | `qa@acme.com` | no | TestRail login |
-| `TESTRAIL_API_KEY` | `xxxxxxxx` | **yes** | TestRail login |
-| `TESTRAIL_PROJECT_ID` | `12` | no | which TestRail project |
-| `TESTRAIL_SUITE_ID` | `34` | no *(optional)* | which suite (multi-suite projects) |
-| `TESTRAIL_CONFIG_IDS` | `55,56` | no *(optional)* | per-device runs, if auto-detect fails |
-
-> 🔒 **Never commit credentials.** Only `.env.example` (blank) and the documented
-> repository variables. `.env` and everything in `app-under-test/` /
-> `testrail-import/` are git-ignored.
-
-TestRail is **optional**: if the `TESTRAIL_*` variables aren't set, the pipeline
-skips publishing (with a log note). Once they're set, a TestRail publish failure
-**fails the pipeline** on purpose.
-
----
-
-## Point the template at your app
-
-Edit **`automation.config.js`** — it's fully commented. Fill in `appName`, the
-iOS `bundleId` / Android `appPackage`, and the `devices` lists. Find everything
-still to do with:
+Use the detailed guided or manual workflow for installation. This template pins
+Appium `2.19.0` and compatible platform-driver versions so an unversioned
+Appium 3 driver is not installed by mistake:
 
 ```bash
-grep -rn "__" .
+appium driver install uiautomator2@4.2.9  # Android
+# or
+appium driver install xcuitest@9.10.5     # iPhone/iPad; requires macOS and Xcode
 ```
 
----
-
-## Get your app onto BrowserStack (the `bs://` URL)
-
-The pipeline never builds your app — you upload a pre-built binary and paste its
-`bs://…` URL.
-
-**Option A — command line:**
-```bash
-npm install
-npm run upload -- --file ~/Downloads/YourApp.apk    # or .ipa
-# prints:  bs://<long-id>
-```
-
-**Option B — dashboard:** BrowserStack → **App Automate → Apps → Upload**, then
-copy the `bs://…` id.
-
-> BrowserStack keeps uploads ~30 days. If an old URL stops working, re-upload.
-
----
-
-## Run a regression
-
-Bitbucket → **Pipelines → Run pipeline** → branch → pick one:
-
-| Pipeline | Runs |
-|---|---|
-| `regression` | iOS **and** Android in parallel |
-| `regression-ios` | iOS only |
-| `regression-android` | Android only |
-
-Fill the run form:
-
-| Field | Meaning |
-|---|---|
-| `BS_APP_URL_IOS` | `bs://…` for the iOS build. **Empty = skip iOS** (not a failure). |
-| `BS_APP_URL_ANDROID` | `bs://…` for the Android build. Empty = skip Android. |
-| `TEST_SECTIONS` | `all`, or a comma-separated subset e.g. `auth,checkout` |
-
-**Tip:** for your first run, use one platform and `TEST_SECTIONS=auth` — it's a
-few minutes and proves the plumbing before a full regression.
-
----
-
-## Read the results (in this order)
-
-1. **Bitbucket → the `Run summary + verdict` step.** This is the *only* step that
-   turns the pipeline red/green. It prints per-platform, per-device pass/fail and
-   a `Failures → device → session` list. **Trust this step, not the test steps** —
-   the test steps always show green on purpose (they record their real result for
-   the verdict step, so it always runs).
-2. **BrowserStack** — each device is a session with a **video**, device/Appium/
-   network logs, and a timeline annotated `▶ START / ✅ PASS / ❌ FAIL` with a
-   `[mm:ss]` mark so you can jump straight to a failure in the video.
-3. **TestRail** — a plan/run per your `automation.config.js` settings, with each
-   `C###` case marked pass/fail.
-
----
-
-## Local development (optional, against a simulator/emulator)
+Only in a `project-copy`, and only after adapting one non-destructive section:
 
 ```bash
-cp .env.example .env          # then edit: PLATFORM, APPIUM_UDID
-npm install
-npm install -g appium         # once
-appium                        # in a separate terminal
-npm test                      # full suite for PLATFORM in .env
-TEST_SECTIONS=auth npm test   # just one section
-npm run test:ios              # force iOS   (npm run test:android for Android)
+node onboarding/check-prerequisites.js --platform android
+# use --platform ios for iPhone/iPad
+
+cd android                    # or: cd ios, from the project-copy root
+cp .env.template .env
+# fill the verified minimum local values described by the chosen workflow
+npm ci
+npm run test:testrail         # offline publisher contract test
+TEST_SECTIONS=your-section npx mocha --dry-run test.js
 ```
 
-Find your device UDID: iOS `xcrun simctl list`; Android `adb devices`.
+Do not run `account-setup`, `example`, or all sections while they still contain
+placeholders. Once the focused dry registration passes, start Appium in another
+terminal and run only the adapted section:
 
----
+```bash
+appium
+# in the platform directory, in the first terminal:
+TEST_SECTIONS=your-section npm test
+```
 
-## Add a new test area (a "section")
+For a strict local project that may not install BrowserStack's optional service
+dependency, use `npm ci --omit=optional` and keep `BROWSERSTACK=false`. The
+committed lock still records that optional dependency; see the manual workflow
+if policy also prohibits dependency declarations.
 
-Three edits (the AI does this with you, or do it manually):
+Useful controls:
 
-1. **Spec** — copy `specs/example.spec.js` to `specs/<name>.spec.js`. Put a
-   TestRail `C###` id at the start of each `it()` title.
-2. **Page objects** — copy `platforms/ios/pages/example.page.js` and
-   `platforms/android/pages/example.page.js` to `<name>.page.js`, and fill in the
-   selectors from your app map.
-3. **Register** — add a line to `sections` in `automation.config.js`:
-   ```js
-   { key: "<name>", spec: "specs/<name>.spec.js" },
-   ```
+| Variable | Default | Purpose |
+|---|---:|---|
+| `TEST_SECTIONS` | `all` | Comma-separated section keys |
+| `NO_RESET` | `true` | Preserve app state between sessions |
+| `TIMEOUT_MULTIPLIER` | `1` local, `1.5` cloud | Scale polling timeouts |
+| `RECOVER_AFTER_FAILURE` | `true` | Recover before the next test |
+| `RESTART_APP_AFTER_FAILURE` | `true` | Terminate/activate during generic recovery |
+| `RECOVERY_READY_SELECTOR` | empty | Optional landmark recovery must await |
+| `MAX_CONSECUTIVE_FAILURES` | `3` | Stop cascading failures; `0` disables |
+| `ALLOW_UNMAPPED_TESTRAIL_CASES` | `false` | Permit deterministic `LOCAL-*` labels for local runs only |
 
-Then dry-run it: `TEST_SECTIONS=<name> npm test`.
+## 4. BrowserStack and TestRail
 
----
+Upload a pre-built app:
 
-## Finding selectors without app source
+```bash
+export BROWSERSTACK_USERNAME=...
+export BROWSERSTACK_ACCESS_KEY=...
+node ci/upload-to-browserstack.js \
+  --file /path/to/app.apk \
+  --env-out /tmp/android-browserstack.env
+```
 
-If you can't drop source into `app-under-test/`, map screens live:
+The returned `bs://...` URL is the build input. The test pipeline never builds
+the app.
 
-- **Appium Inspector** (both platforms) — connect with the same capabilities as
-  `.env`, navigate to a screen, and read the element tree.
-- **Android:** `adb shell uiautomator dump /sdcard/s.xml && adb pull /sdcard/s.xml`
-- **iOS:** Xcode → *Accessibility Inspector*.
-- **Any failure** already saves a page-source XML in `screenshots/`.
+`npm run test:ci` starts one WDIO process per entry in `lib/devices.js`. The
+official BrowserStack service owns each session; this is important because Test
+Observability can then attach test boundaries, per-test video, command logs, and
+automatic failure evidence to the real App Automate session.
 
-Prefer selectors in this order: `~accessibilityId` → `#resourceId`/`#name` →
-platform query (`android=`/`ios=`) → `//xpath` (last resort; note it's fragile
-and ask the app team for an accessibility id).
+BrowserStack selector self-healing is explicitly disabled in both platform
+configurations. See the dependency-policy note in
+[MANUAL-WORKFLOW.md](MANUAL-WORKFLOW.md) if project rules prohibit installing
+its AI-related transitive package or even recording it in a lock file.
 
----
+TestRail is mandatory in the matrix runner. It:
 
-## Troubleshooting
+1. extracts all `C###` IDs from summaries;
+2. finds or creates `<TESTRAIL_PLAN_PREFIX> <Month> <Year>`;
+3. creates a plan entry with one configured run per matrix device;
+4. publishes pass/fail/blocked with at least one second elapsed;
+5. fails the matrix when publication fails.
 
-| Symptom | Cause & fix |
-|---|---|
-| **Pipeline is red but tests look fine** | Read the **verdict step**, not the test steps. It names the platform/device that actually failed. |
-| **"no sessions" / a platform was skipped** | Its `BS_APP_URL_*` field was empty → that platform is skipped by design. Provide the `bs://` URL to run it. |
-| **Can't find the run in TestRail** | Check `TESTRAIL_*` repository variables are set, and your `automation.config.js` `testrail.planNamePattern` / `projectId`. Unset TestRail = publishing skipped (see the log note). |
-| **A single test failed** | Open the BrowserStack session from the verdict list, scrub the video to the `[mm:ss]` mark, and read the `screenshots/` artifact for that test. |
-| **Testing only one area** | `TEST_SECTIONS=<section>` — the `auth` section always runs first so subsets work standalone. |
-| **`Missing APPIUM_UDID`** (local) | Set `APPIUM_UDID` in `.env` (`xcrun simctl list` / `adb devices`). |
-| **`… is still a placeholder`** | You haven't filled that value in `automation.config.js`. Run `grep -rn "__" .`. |
-| **Both platforms queue instead of running together** | Your BrowserStack plan has <2 parallel slots. Set `BS_MATRIX_CONCURRENCY=1`, or run `regression-ios` / `regression-android` separately. |
+Run the safe offline contract test at any time:
 
----
+```bash
+cd android && npm run test:testrail
+cd ../ios && npm run test:testrail
+node ../ci/report.self-test.js
+node ../ci/workflow.self-test.js
+node ../onboarding/check-prerequisites.self-test.js
+node ../onboarding/create-project-copy.self-test.js
+```
 
-## Security note
+The live smoke publisher is guarded because it writes to TestRail:
 
-Only `.env.example` (blank) and the documented repository variables ever hold
-credentials. Do not commit a real `.env`, app source, or TestRail export — they're
-git-ignored for you. No personal data or customer identifiers belong in test code
-or app maps.
+```bash
+TESTRAIL_SMOKE_CASE_ID=C123 npm run test:testrail:smoke -- --publish
+```
+
+## 5. Bitbucket setup
+
+Enable Pipelines and add repository variables:
+
+| Variable | Required | Secured |
+|---|---|---|
+| `APP_DISPLAY_NAME` | yes | no |
+| `ANDROID_APP_PACKAGE` | Android | no |
+| `ANDROID_APP_ACTIVITY` | Android | no |
+| `IOS_BUNDLE_ID` | iOS | no |
+| `BROWSERSTACK_USERNAME` | yes | no |
+| `BROWSERSTACK_ACCESS_KEY` | yes | yes |
+| `E2E_EMAIL_PREFIX` | account setup | no |
+| `E2E_EMAIL_DOMAIN` | account setup | no |
+| `E2E_TEST_PASSWORD` | account setup | yes |
+| `TESTRAIL_BASE_URL` | yes | no |
+| `TESTRAIL_USERNAME` | yes | no |
+| `TESTRAIL_API_KEY` | yes | yes |
+| `TESTRAIL_PROJECT_ID` | yes | no |
+| `TESTRAIL_SUITE_ID` | multi-suite projects | no |
+| `TESTRAIL_PLAN_PREFIX` | recommended | no |
+| `TESTRAIL_CONFIG_IDS` | only if auto-matching fails | no |
+
+In TestRail, create Android and iOS configuration groups. Config names must
+contain the device name and platform major version, for example
+`Google Pixel 10 - Android 16 (BrowserStack)`. As an escape hatch,
+`TESTRAIL_CONFIG_IDS` accepts IDs in matrix order.
+
+Run `custom: regression-android` or `regression-ios` first with a single section.
+Then use `custom: regression` and provide one or both `bs://` URLs. An empty URL
+skips that platform.
+
+The platform steps deliberately finish green after writing
+`test-status/<platform>.env`; this guarantees the combined report still runs.
+The report step is the authoritative pipeline result.
+
+Two devices on both platforms can consume four BrowserStack parallel sessions.
+Set `BS_MATRIX_CONCURRENCY=1`, reduce `lib/devices.js`, or make the platform
+steps sequential if the plan has fewer slots.
+
+## Optional Firebase download
+
+`ci/fetch-firebase-release.js` can download the latest or a specified Firebase
+App Distribution release with a service account holding the App Distribution
+Viewer role. It is parked—not called by the supplied pipelines—until the
+required Firebase variables and security approval exist. See the script header
+for its exact inputs and outputs.
+
+## Operational watch-outs
+
+- Choose and record the permitted authoring route before project material is
+  inspected. Do not invoke Claude on a manual-only project.
+- Never adapt a folder marked `source-template`; create and use a
+  `project-copy` first.
+- Throwaway signup runs accumulate server-side accounts. Agree a cleanup policy.
+- BrowserStack uploaded app URLs expire; re-upload an old binary when needed.
+- Device names and OS versions change over time. Reconfirm `lib/devices.js`.
+- Keep destructive tests at their Cancel boundary unless deletion is explicitly
+  the behaviour under test and the data is isolated.
+- `NO_RESET=true` can cause account setup to skip when the app is already signed
+  in. Use a clean device or `NO_RESET=false` when signup itself must run.
+- Never commit `.env`, service-account JSON, API keys, app binaries, screenshots,
+  or copied application source.
+
+For a visual walkthrough, open
+[docs/learning-console.html](docs/learning-console.html) in a browser.

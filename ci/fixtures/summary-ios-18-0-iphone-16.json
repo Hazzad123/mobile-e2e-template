@@ -1,0 +1,25 @@
+{
+  "suiteName": "Example App E2E (iOS)",
+  "platform": "ios",
+  "status": "FAILED",
+  "total": 2,
+  "passed": 1,
+  "failed": 1,
+  "skipped": 0,
+  "abortReason": null,
+  "sessionUrl": "https://example.invalid/browserstack-session",
+  "results": [
+    {
+      "title": "Example App E2E (iOS) C101 App launches",
+      "status": "pass",
+      "durationMs": 1200
+    },
+    {
+      "title": "Example App E2E (iOS) C202 Opens example screen",
+      "status": "fail",
+      "durationMs": 2300,
+      "errorMessage": "Example failure fixture",
+      "videoTs": "00:42"
+    }
+  ]
+}

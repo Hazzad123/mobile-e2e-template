@@ -1,16 +1,26 @@
-# Dependencies
-node_modules/
-
-# Local secrets & settings — NEVER commit these
+.DS_Store
 .env
+**/.env
+node_modules/
+**/node_modules/
 
-# Generated output
-test-results/
-screenshots/
-test-status/
-
-# Tester drop-ins: keep the folder + its README, ignore the dropped-in contents
+# Local app source and binaries
 app-under-test/*
 !app-under-test/README.md
+app-binary/
+app-meta/
+
+# Test output
+test-status/
+**/test-results/
+**/screenshots/
+**/logs/
+**/log/
+
+# Optional TestRail exports
 testrail-import/*
 !testrail-import/README.md
+
+# Editors
+.idea/
+.vscode/

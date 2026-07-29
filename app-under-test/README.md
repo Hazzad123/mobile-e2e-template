@@ -1,7 +1,11 @@
-# app-under-test/
+# Optional local app source
 
-**Drop your app's source code here** (clone your app's repo and copy it in). One
-or both platforms:
+Use this location only inside a separate folder whose root
+`template-state.json` says `project-copy`. Never add app source to the source
+template.
+
+Place approved app source here only when the project's rules allow it. One or
+both platforms can be present:
 
 ```
 app-under-test/
@@ -9,26 +13,30 @@ app-under-test/
 └── android/   ← your Android app source (Gradle project / Kotlin/Java)
 ```
 
-## Why
+This folder is ignored by Git except for this README. That reduces accidental
+commits; it is not a security boundary.
 
-This is the fastest, most reliable way to build accurate tests. An AI (or you)
-reads the source to find:
+## What to inspect
 
 | What | Where it lives in the source |
 |---|---|
-| iOS bundle id → `automation.config.js` | `PRODUCT_BUNDLE_IDENTIFIER` in `project.pbxproj`, or `Info.plist` |
-| Android package → `automation.config.js` | `applicationId` in `app/build.gradle` |
+| iOS bundle id → `ios/.env` | `PRODUCT_BUNDLE_IDENTIFIER` in `project.pbxproj`, or `Info.plist` |
+| Android package/activity → `android/.env` | `applicationId` in `app/build.gradle`; launcher in `AndroidManifest.xml` |
 | iOS accessibility ids (`~id` selectors) | `.accessibilityIdentifier(...)` in SwiftUI / `accessibilityIdentifier =` in UIKit |
-| Android accessibility ids (`~id`) | `contentDescription`, Compose `testTag` |
+| Android accessibility ids (`~id`) | `contentDescription` |
+| Android Compose tags | `testTag`; use `#id` only when `testTagsAsResourceId` is enabled and proven in the hierarchy |
 | Android resource ids (`#id`) | `android:id="@+id/..."` in `res/layout/*.xml` |
 | Screen navigation | `NavigationStack`/`NavHost`, storyboards, nav graphs |
 
-The AI turns this into `docs/APP-MAP.md`, then into page objects and specs.
+Choose the approved route:
 
-## Notes
+- In the [manual workflow](../MANUAL-WORKFLOW.md), a person searches the source,
+  proves runtime behaviour on a build, fills `app-map/APP-MAP.md`, and writes the
+  section files by hand.
+- In the [Claude-guided workflow](../AI-GUIDED-WORKFLOW.md), Claude reads only
+  the approved local paths, fills the same app map and worksheet, then writes
+  and validates the section files.
 
-- **This folder is git-ignored** (except this README) — your app source is never
-  committed into the test repo.
-- **Nothing here is required to run tests.** If you can't share source, the app
-  can be mapped live instead (open it on a device and dump the UI hierarchy —
-  see the README's "Finding selectors without source" section).
+Nothing here is required to run tests. If source cannot be used, map the app
+from an approved installed build with local Appium/accessibility inspection.
+Never let either route guess a selector that has not been proven.
