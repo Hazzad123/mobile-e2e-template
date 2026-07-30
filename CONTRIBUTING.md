@@ -51,19 +51,7 @@ Test rules:
 - Keep platform-specific behaviour in the matching platform tree.
 - Keep BrowserStack self-healing disabled in projects that prohibit AI features.
 
-Validation before handoff:
-
-```bash
-rg -n "__[A-Z0-9_]+__|TODO" android ios app-map -g '!.env.template'
-find android ios ci onboarding -path '*/node_modules' -prune -o \
-  -type f -name '*.js' -print0 | xargs -0 -n1 node --check
-(cd android && npm run test:testrail)
-(cd ios && npm run test:testrail)
-node ci/report.self-test.js
-node ci/workflow.self-test.js
-node onboarding/check-prerequisites.self-test.js
-```
-
-Unresolved placeholders are expected only while the repository is still being
-adapted to a new app. Call them out clearly; never invent production selectors,
-credentials, app IDs, or TestRail case IDs.
+Run the validation checks listed in `CLAUDE.md` before handoff. Unresolved
+placeholders are expected only while the repository is still being adapted to a
+new app. Call them out clearly; never invent production selectors, credentials,
+app IDs, or TestRail case IDs.

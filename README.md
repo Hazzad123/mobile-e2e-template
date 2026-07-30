@@ -51,11 +51,8 @@ This starter itself was developed with AI assistance. Read
 AI-authored artifacts, dependency declarations, or software provenance.
 
 Both workflows begin by downloading this template as a Zip and working in the
-unzipped folder. Because that folder is detached from the template's shared
-repository, it is already an isolated project copy — there is no in-place copy
-step and no workspace marker. Do not commit Git history, dependencies, secrets,
-app inputs, imports, or generated evidence back into a shared checkout of the
-starter.
+unzipped folder. Do not commit Git history, dependencies, secrets, app inputs,
+imports, or generated evidence back into a shared checkout of the starter.
 
 The two platform suites intentionally mirror one another. Mobile selectors,
 gestures, capabilities, and recovery behaviour diverge in real apps; keeping the
@@ -167,17 +164,7 @@ platform.
 
 ## 3. Run locally
 
-Use the detailed guided or manual workflow for installation. This template pins
-Appium `2.19.0` and compatible platform-driver versions so an unversioned
-Appium 3 driver is not installed by mistake:
-
-```bash
-appium driver install uiautomator2@4.2.9  # Android
-# or
-appium driver install xcuitest@9.10.5     # iPhone/iPad; requires macOS and Xcode
-```
-
-In your downloaded copy, and only after adapting one non-destructive section:
+Use the detailed guided or manual workflow for installation. In your downloaded copy, and only after adapting one non-destructive section:
 
 ```bash
 node onboarding/check-prerequisites.js --platform android

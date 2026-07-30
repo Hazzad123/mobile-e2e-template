@@ -8,9 +8,7 @@ Claude guide setup and write the tests, or use the fully manual process.
 ## First, get your own copy
 
 Download this template as a Zip, unzip it to a folder of your own, and work
-there. That downloaded folder is detached from the template's shared
-repository, so it is already your isolated project copy — there is nothing to
-copy in place and no workspace marker to set.
+there.
 
 ## Then choose the permitted authoring path
 

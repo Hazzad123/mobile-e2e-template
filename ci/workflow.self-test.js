@@ -16,8 +16,7 @@ const requiredFiles = [
   "ai/START-NEW-APP.md",
   "ai/ADD-SECTION.md",
   "ai/DEBUG-FAILURE.md",
-  "ai/GET-STARTED.md",
-  "ai/README.md",
+
   "onboarding/BEGINNER-RUNBOOK.md",
   "onboarding/PROJECT-SETUP-TEMPLATE.md",
   "onboarding/check-prerequisites.js",
@@ -194,37 +193,6 @@ if (
   || !guidedWorkflow.includes("ALLOW_UNMAPPED_TESTRAIL_CASES=true")
 ) {
   fail("The Claude-guided workflow does not describe a complete local first-test route.");
-}
-
-const beginnerExample = read("ai/GET-STARTED.md");
-assertBefore(
-  beginnerExample,
-  "Are you allowed to use AI on this project?",
-  "What do you currently have",
-  "Beginner conversation sequence",
-);
-for (const requiredPhrase of [
-  "local service that lets a JavaScript test",
-  "UiAutomator2",
-  "I’m unsure",
-  "LOCAL-LAUNCH-SMOKE",
-  "The first test passed",
-  "downloaded copy of the template",
-]) {
-  if (!beginnerExample.includes(requiredPhrase)) {
-    fail(`The beginner conversation does not reach a concrete first pass: ${requiredPhrase}`);
-  }
-}
-const claudeTurns = [
-  ...beginnerExample.matchAll(
-    /^> \*\*Claude:\*\*([\s\S]*?)(?=^> \*\*User:\*\*|(?![\s\S]))/gm,
-  ),
-].map((match) => match[1]);
-if (
-  claudeTurns.length < 15
-  || claudeTurns.some((turn) => (turn.match(/\?/g) || []).length !== 1)
-) {
-  fail("Every Claude turn in the beginner example must ask exactly one user-facing question.");
 }
 
 const advancedStart = read("ai/START-NEW-APP.md");

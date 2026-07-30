@@ -1,19 +1,14 @@
 # Project setup status
 
-The safe working-copy command uses this template to create
-`app-map/PROJECT-SETUP.md`. Claude or a manual maintainer then updates that
-project-local record during approved onboarding. Do not store secrets, device
-identifiers, or raw customer/project data here.
+This template is copied to `app-map/PROJECT-SETUP.md` during onboarding. Claude
+or a manual maintainer then updates that project-local record. Do not store
+secrets, device identifiers, or raw customer/project data here.
 
-## Workspace
+## Project
 
-- Workspace role:
 - Project name:
-- Source template: `mobile-e2e-template`
-- Working-copy folder:
 - Created:
-- Copy method:
-- Git initialisation: not performed by copier
+- Git initialisation:
 
 ## Approval
 
@@ -29,6 +24,7 @@ identifiers, or raw customer/project data here.
 
 - App name:
 - Platform(s):
+- Run target: local / BrowserStack / pipeline
 - Environment/build:
 - Android package/activity:
 - iOS bundle ID:

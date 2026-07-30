@@ -92,11 +92,8 @@ tests inside a shared checkout of this starter. First get a clean copy for the
 actual project.
 
 Download this template as a Zip and unzip it to an unused folder of your own,
-normally named after the app (for example `example-app-automation`). Because a
-Zip download is detached from the template's shared repository, that unzipped
-folder is already your isolated project copy — there is nothing to copy in place
-and no workspace marker to set. Open that folder and do every remaining step
-there.
+normally named after the app (for example `example-app-automation`). Open that
+folder and do every remaining step there.
 
 The tools below need Node.js 20 or later. `npm` normally arrives with Node.js,
 and Git records file history later if the project chooses to initialise it.

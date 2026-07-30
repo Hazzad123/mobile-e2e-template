@@ -94,11 +94,9 @@ into its own gate.
 
 ## Stage 2: check the basic machine automatically
 
-This runbook assumes the user is already working in their own copy of the
-template — a folder unzipped from a download, not the shared template
-repository. `START-HERE.md` gives that as the first step. Because that copy is a
-detached folder, there is nothing to copy in place and no workspace marker to
-check; app work happens right here.
+This runbook assumes the user is already working in their own downloaded copy of
+the template — a folder unzipped from the Zip, not the shared template
+repository. `START-HERE.md` gives that as the first step.
 
 Run:
 

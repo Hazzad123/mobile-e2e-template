@@ -19,8 +19,7 @@ readiness scripts are the only repository state needed before approval.
 
 This onboarding assumes the user is working in their own downloaded copy of the
 template — a detached folder from a Zip download, not the shared template
-repository. `START-HERE.md` states that as the first step, so there is no
-in-place copy to make and no workspace marker to check.
+repository. `START-HERE.md` states that as the first step.
 
 For a new setup, the first response should have this shape:
 
@@ -81,7 +80,7 @@ Onboarding state, revealed one question at a time:
    `onboarding/PROJECT-SETUP-TEMPLATE.md` to `app-map/PROJECT-SETUP.md` if it
    does not already exist, recording `Claude-guided` as the authoring route, the
    non-secret approval decision, and the core-readiness result. This record is
-   what `continue setup` resumes from; it is not a workspace marker.
+   what `continue setup` resumes from.
 3. Ask what app material they have: approved source code first, then an APK/IPA,
    an already-installed app, or unsure. Explain these terms if necessary and
    approve one exact path/input before reading it. Asking for source early lets

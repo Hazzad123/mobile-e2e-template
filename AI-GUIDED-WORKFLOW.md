@@ -83,11 +83,10 @@ introduced separately as the platform adapter Appium needs. An emulator or
 simulator is described as a virtual phone on the local computer. The user is
 not quizzed on those names.
 
-Because the user is working in their own downloaded copy of the template, there
-is no in-place copy step and no workspace marker. Claude records the non-secret
-setup decisions in `app-map/PROJECT-SETUP.md`, so typing `continue setup` later
-resumes onboarding without repeating answered questions. That record excludes
-credentials, device identifiers, and raw project data.
+Claude records the non-secret setup decisions in `app-map/PROJECT-SETUP.md`, so
+typing `continue setup` later resumes onboarding without repeating answered
+questions. That record excludes credentials, device identifiers, and raw project
+data.
 
 ## Safety defaults
 
@@ -110,16 +109,9 @@ approved TestRail export under `testrail-import/`. Those locations are ignored
 by Git but are not security boundaries. Claude will help with them after the
 relevant approval rather than expecting a new user to prepare them.
 
-If the team does not use TestRail, Claude sets
-`ALLOW_UNMAPPED_TESTRAIL_CASES=true` only in the platform's private local
-`.env`, uses a descriptive `LOCAL-*` test label, and keeps TestRail publishing
-off. Claude does not invent a `C###` reference. The runtime ignores this
-local-only permission in BrowserStack/CI mode, where the supplied matrix
-requires genuine TestRail case IDs. Claude therefore leaves that hosted path
-disabled unless the project later adopts TestRail or explicitly approves an
-architectural change. If the team does use TestRail, Claude matches only
-existing cases from an approved export or verified source; local setup still
-does not authorize publishing results.
+When the team does not use TestRail, Claude sets `ALLOW_UNMAPPED_TESTRAIL_CASES=true`
+in the local `.env` and uses `LOCAL-*` labels; TestRail publishing stays off.
+See `CLAUDE.md` for the full evidence and TestRail rules.
 
 ## Advanced shortcut
 
@@ -187,31 +179,9 @@ a plausible guess.
 
 ## Let Claude validate and iterate
 
-Claude should run the safe local checks itself:
-
-```bash
-rg -n "__[A-Z0-9_]+__|TODO" android ios app-map -g '!.env.template'
-find android ios ci onboarding -path '*/node_modules' -prune -o \
-  -type f -name '*.js' -print0 | xargs -0 -n1 node --check
-(cd android && npm run test:testrail)
-(cd ios && npm run test:testrail)
-node ci/report.self-test.js
-node ci/workflow.self-test.js
-node onboarding/check-prerequisites.self-test.js
-```
-
-Despite their names, the `test:testrail` commands above are offline checks of
-the result-formatting code. They do not contact TestRail or publish a result.
-
-After the required `.env` values are present, it should also run:
-
-```bash
-cd android                 # or: cd ios
-TEST_SECTIONS=the-new-section npx mocha --dry-run test.js
-TEST_SECTIONS=the-new-section npm test
-```
-
-When a device run fails, keep Claude on the same small test. Allow it to inspect
+The validation checks are listed in `CLAUDE.md`. Claude should run them after
+every change and report exact outcomes. When a device run fails, keep Claude on
+the same small test. Allow it to inspect
 the approved local failure screenshot, technical screen description, failed
 step, last screen-element identifier, and Appium log; then have it make the
 smallest evidence-backed fix and rerun. Do not let it hide a real failure by
