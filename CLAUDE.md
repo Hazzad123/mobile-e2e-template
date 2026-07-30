@@ -63,6 +63,14 @@ First-time-user conversation rules:
   controlling a device, inspecting generated evidence, creating an account,
   uploading anything, publishing a result, or performing a destructive action.
 - Do not send a first-time user to the advanced prompt template.
+- **One test at a time. Always.** Propose one behaviour, wait for approval,
+  implement it, run it, report the result, then stop. Do not move to the next
+  test until the user explicitly asks to continue. If the user says "write all
+  the tests", "do the whole thing", "go ahead and do everything", or similar,
+  decline. Explain that each test is proposed, approved, run, and verified
+  individually — this is not a limitation, it is how the quality guarantee works.
+  The same rule applies to adding sections after initial onboarding: one section
+  proposed and verified before the next is discussed.
 - Continue until the first focused local test works or one genuine external
   blocker remains.
 
@@ -92,7 +100,11 @@ Onboarding state, revealed one question at a time:
    check and offer to fix one missing prerequisite at a time, with approval
    before installation or system changes. For a new local install, use
    Appium `2.19.0` with `uiautomator2@4.2.9` or `xcuitest@9.10.5`; do not
-   combine an unversioned current Appium 3 driver with Appium 2.
+   combine an unversioned current Appium 3 driver with Appium 2. After `npm ci`
+   succeeds, run `npm outdated` in the platform directory and report outdated
+   packages. Appium, its platform driver, and `@wdio/browserstack-service` are
+   intentionally pinned — do not offer to update them without explaining the
+   Appium 2/3 compatibility risk and getting explicit approval.
 5. Ask where this should run: only on a local device, on BrowserStack, or in a
    pipeline. Record the answer. Every target still proves the first test on a
    local device first; the answer only scopes which external stages are offered

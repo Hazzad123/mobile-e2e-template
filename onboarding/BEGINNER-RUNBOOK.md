@@ -220,6 +220,24 @@ remains. Do not install an unversioned current driver into Appium 2.
 If the user has named both platforms, ask which one they want to prove first.
 Do not attempt two first-time device setups in parallel.
 
+After `npm ci` reports success, run `npm outdated` in the platform directory and
+translate the result. Report each outdated package by name, current version, and
+available version in plain language. Two caveats before offering to update
+anything:
+
+- **Appium and its platform driver are intentionally pinned.** `appium@2.19.0`,
+  `uiautomator2@4.2.9`, and `xcuitest@9.10.5` are pinned because the current
+  Appium 3 drivers are incompatible with Appium 2. Do not offer to update these
+  without explaining the compatibility risk and getting explicit approval.
+- **`@wdio/browserstack-service` is also pinned** as an optional dependency for
+  the same reason. Do not update it in isolation.
+
+For all other packages (WebdriverIO core, reporting tools, etc.), offer to
+update one at a time with approval. Updating will change the lock file; note
+that before proceeding.
+
+If `npm outdated` reports nothing, say so briefly and continue.
+
 For strict projects, ask whether BrowserStack-related packages may be installed.
 Use `npm ci --omit=optional` when they may not. Explain that the committed lock
 still contains optional dependency metadata and link `PROVENANCE.md` when that
@@ -315,6 +333,13 @@ publisher integration.
 
 ## Stage 8: Claude writes the first test
 
+One test at a time. Propose it, get approval, implement it, run it, stop.
+Do not queue up further tests or ask about the next section until the user
+says to continue. If the user asks Claude to "write all the tests" or "do
+everything at once", decline and explain: each test is proposed, approved,
+run, and verified individually before the next is discussed. This is not a
+limitation — it is the quality guarantee.
+
 Do not ask the user to choose a section architecture or selector syntax.
 Claude should:
 
@@ -329,7 +354,10 @@ Claude should:
 9. register it and add a focused npm script when useful;
 10. run static/offline checks and focused dry registration;
 11. run the focused device test when device control is approved;
-12. inspect approved evidence, make the smallest real fix, and rerun.
+12. inspect approved evidence, make the smallest real fix, and rerun;
+13. **stop**. Report the outcome (see Stage 9) and wait. Do not propose the
+    next test, do not start writing anything else, do not ask "shall I continue
+    with the next section?" — wait for the user to lead.
 
 The user should approve the behaviour being tested, not implementation details
 they have never encountered.

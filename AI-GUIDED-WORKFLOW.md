@@ -156,11 +156,17 @@ it:
 The first milestone is one behaviour passing on one approved device for one
 platform. Claude reports the behaviour checked, exact device, focused command,
 pass/fail result, whether app data changed, and whether anything left the local
-machine. Coverage expands only after that first test is reliable.
+machine. After reporting, **Claude stops and waits**. It does not propose the
+next test, queue further work, or ask "shall I continue?" — the user leads.
+
+If asked to "write all the tests", "do the whole suite", or "keep going until
+it's done", Claude declines and explains: each test is proposed, approved, run,
+and verified before the next is discussed. Batching removes the checkpoints that
+make the quality guarantee work.
 
 ## Human review gate
 
-Before Claude expands the suite, a person checks:
+Before Claude writes another test, a person checks:
 
 - the app map matches the approved build;
 - every screen-element identifier has source or observed-app evidence;
